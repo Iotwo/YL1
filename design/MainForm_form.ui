@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainForm</class>
+ <widget class="QMainWindow" name="MainForm">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>910</width>
+    <height>570</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>910</width>
+    <height>570</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>9999999</width>
+    <height>9999999</height>
+   </size>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::TabFocus</enum>
+  </property>
+  <property name="windowTitle">
+   <string>Учёт расходов и доходов</string>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonTextOnly</enum>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>910</width>
+     <height>530</height>
+    </size>
+   </property>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>908</width>
+      <height>510</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="main_hLayout">
+     <property name="spacing">
+      <number>3</number>
+     </property>
+     <item>
+      <widget class="QTableWidget" name="backlog_tableWidget">
+       <property name="minimumSize">
+        <size>
+         <width>640</width>
+         <height>480</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="cursor" stdset="0">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="showDropIndicator" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="dragDropOverwriteMode">
+        <bool>false</bool>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="columnCount">
+        <number>6</number>
+       </property>
+       <column/>
+       <column/>
+       <column/>
+       <column/>
+       <column/>
+       <column/>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="interface_vLayout">
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="categories_vLayout">
+         <property name="spacing">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QComboBox" name="catSelection_cmbBox">
+           <property name="minimumSize">
+            <size>
+             <width>180</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Tahoma</family>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="opSelection_list">
+           <property name="minimumSize">
+            <size>
+             <width>180</width>
+             <height>120</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Tahoma</family>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="amount_vLayout">
+         <property name="spacing">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QLineEdit" name="amount_lineEd">
+           <property name="minimumSize">
+            <size>
+             <width>180</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Tahoma</family>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="inputMethodHints">
+            <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
+           </property>
+           <property name="inputMask">
+            <string/>
+           </property>
+           <property name="maxLength">
+            <number>16</number>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="predefinedAmt_gLayout" rowstretch="0,0,0,0,0">
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="defVal6_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>150</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QPushButton" name="defVal5_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>300</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QPushButton" name="defVal1_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>5000</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="defVal4_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>500</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="defVal3_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>1000</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="defVal2_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>1500</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="action_hLayout">
+         <property name="spacing">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="clear_btn">
+           <property name="minimumSize">
+            <size>
+             <width>60</width>
+             <height>120</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Tahoma</family>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Отменить
+и очистить</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addRec_btn">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>120</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Tahoma</family>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Добавить</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="main_menu_bar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>910</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>600</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>30</height>
+    </size>
+   </property>
+   <widget class="QMenu" name="main_menu_tables_btn">
+    <property name="geometry">
+     <rect>
+      <x>267</x>
+      <y>126</y>
+      <width>240</width>
+      <height>94</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>240</width>
+      <height>35</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>240</width>
+      <height>100</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>10</pointsize>
+      <kerning>false</kerning>
+     </font>
+    </property>
+    <property name="title">
+     <string>Меню</string>
+    </property>
+    <addaction name="menu_edit_sups_btn"/>
+    <addaction name="menu_call_info_btn"/>
+   </widget>
+   <widget class="QMenu" name="main_menu_reports_btn">
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>35</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Отчёты</string>
+    </property>
+    <addaction name="menu_report_today_btn"/>
+    <addaction name="menu_report_last_week_btn"/>
+    <addaction name="menu_report_last_month_btn"/>
+    <addaction name="menu_report_all_time_btn"/>
+   </widget>
+   <widget class="QMenu" name="menu_actions">
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>35</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Действия</string>
+    </property>
+    <addaction name="menu_export_btn"/>
+    <addaction name="menu_settings_btn"/>
+   </widget>
+   <addaction name="main_menu_tables_btn"/>
+   <addaction name="main_menu_reports_btn"/>
+   <addaction name="menu_actions"/>
+  </widget>
+  <widget class="QStatusBar" name="app_status_bar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>600</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <family>Times New Roman</family>
+     <pointsize>10</pointsize>
+     <kerning>false</kerning>
+    </font>
+   </property>
+  </widget>
+  <action name="menu_edit_sups_btn">
+   <property name="text">
+    <string>Изменить служебные</string>
+   </property>
+  </action>
+  <action name="menu_edit_ops_btn">
+   <property name="text">
+    <string>Изменить операции</string>
+   </property>
+   <property name="iconText">
+    <string>Отчёты...</string>
+   </property>
+   <property name="toolTip">
+    <string>Отчёты...</string>
+   </property>
+  </action>
+  <action name="menu_call_info_btn">
+   <property name="text">
+    <string>Справка</string>
+   </property>
+  </action>
+  <action name="menu_report_today_btn">
+   <property name="text">
+    <string>За сегодня</string>
+   </property>
+  </action>
+  <action name="menu_report_last_week_btn">
+   <property name="text">
+    <string>За неделю</string>
+   </property>
+  </action>
+  <action name="menu_report_last_month_btn">
+   <property name="text">
+    <string>За месяц</string>
+   </property>
+  </action>
+  <action name="menu_report_all_time_btn">
+   <property name="text">
+    <string>За всё время</string>
+   </property>
+  </action>
+  <action name="menu_edit_rec_btn">
+   <property name="text">
+    <string>Редактор записей</string>
+   </property>
+  </action>
+  <action name="menu_export_btn">
+   <property name="text">
+    <string>Экспорт данных</string>
+   </property>
+  </action>
+  <action name="menu_settings_btn">
+   <property name="text">
+    <string>Настройки</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
