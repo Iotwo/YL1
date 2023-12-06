@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>910</width>
-    <height>570</height>
+    <width>916</width>
+    <height>582</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -83,11 +83,35 @@
        <property name="cursor" stdset="0">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::ActionsContextMenu</enum>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+       </property>
        <property name="showDropIndicator" stdset="0">
         <bool>false</bool>
        </property>
        <property name="dragDropOverwriteMode">
         <bool>false</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectItems</enum>
+       </property>
+       <property name="textElideMode">
+        <enum>Qt::ElideRight</enum>
+       </property>
+       <property name="gridStyle">
+        <enum>Qt::DashLine</enum>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
@@ -114,7 +138,23 @@
           <number>3</number>
          </property>
          <item>
-          <widget class="QComboBox" name="catSelection_cmbBox">
+          <widget class="QLabel" name="optype_hint_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Тип операции</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="opSelection_cmbBox">
            <property name="minimumSize">
             <size>
              <width>180</width>
@@ -128,10 +168,29 @@
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>Выберите операцию</string>
+           </property>
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="opSelection_list">
+          <widget class="QLabel" name="cat_hint_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Категории</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="catSelection_list">
            <property name="minimumSize">
             <size>
              <width>180</width>
@@ -144,6 +203,9 @@
              <pointsize>12</pointsize>
              <bold>true</bold>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>Выберите категории</string>
            </property>
           </widget>
          </item>
@@ -169,6 +231,9 @@
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>Введите сумму</string>
+           </property>
            <property name="inputMethodHints">
             <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
            </property>
@@ -192,46 +257,6 @@
             <number>3</number>
            </property>
            <item row="0" column="0">
-            <widget class="QPushButton" name="defVal6_btn">
-             <property name="minimumSize">
-              <size>
-               <width>30</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>Terminal</family>
-               <pointsize>14</pointsize>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>150</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QPushButton" name="defVal5_btn">
-             <property name="minimumSize">
-              <size>
-               <width>30</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>Terminal</family>
-               <pointsize>14</pointsize>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>300</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
             <widget class="QPushButton" name="defVal1_btn">
              <property name="minimumSize">
               <size>
@@ -246,13 +271,16 @@
                <bold>true</bold>
               </font>
              </property>
+             <property name="toolTip">
+              <string>Преднастроенная сумма</string>
+             </property>
              <property name="text">
-              <string>5000</string>
+              <string>150</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QPushButton" name="defVal4_btn">
+           <item row="0" column="1">
+            <widget class="QPushButton" name="defVal2_btn">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -266,12 +294,38 @@
                <bold>true</bold>
               </font>
              </property>
+             <property name="toolTip">
+              <string>Преднастроенная сумма</string>
+             </property>
              <property name="text">
-              <string>500</string>
+              <string>300</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="4" column="1">
+            <widget class="QPushButton" name="defVal6_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Преднастроенная сумма</string>
+             </property>
+             <property name="text">
+              <string>5000</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
             <widget class="QPushButton" name="defVal3_btn">
              <property name="minimumSize">
               <size>
@@ -286,13 +340,16 @@
                <bold>true</bold>
               </font>
              </property>
+             <property name="toolTip">
+              <string>Преднастроенная сумма</string>
+             </property>
              <property name="text">
-              <string>1000</string>
+              <string>500</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QPushButton" name="defVal2_btn">
+           <item row="2" column="1">
+            <widget class="QPushButton" name="defVal4_btn">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -305,6 +362,32 @@
                <pointsize>14</pointsize>
                <bold>true</bold>
               </font>
+             </property>
+             <property name="toolTip">
+              <string>Преднастроенная сумма</string>
+             </property>
+             <property name="text">
+              <string>1000</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="defVal5_btn">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Terminal</family>
+               <pointsize>14</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Преднастроенная сумма</string>
              </property>
              <property name="text">
               <string>1500</string>
@@ -337,7 +420,8 @@
            </property>
            <property name="text">
             <string>Отменить
-и очистить</string>
+ --- 
+Удалить</string>
            </property>
           </widget>
          </item>
@@ -357,7 +441,9 @@
             </font>
            </property>
            <property name="text">
-            <string>Добавить</string>
+            <string>Добавить
+---
+Применить</string>
            </property>
           </widget>
          </item>
@@ -373,7 +459,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>910</width>
+     <width>916</width>
      <height>30</height>
     </rect>
    </property>
@@ -398,8 +484,8 @@
    <widget class="QMenu" name="main_menu_tables_btn">
     <property name="geometry">
      <rect>
-      <x>267</x>
-      <y>126</y>
+      <x>269</x>
+      <y>127</y>
       <width>240</width>
       <height>94</height>
      </rect>
@@ -560,7 +646,7 @@
   </action>
   <action name="menu_export_btn">
    <property name="text">
-    <string>Экспорт данных</string>
+    <string>Импорт данных</string>
    </property>
   </action>
   <action name="menu_settings_btn">

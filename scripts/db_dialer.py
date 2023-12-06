@@ -1,6 +1,8 @@
+from datetime import datetime
 import sqlite3
 from sqlite3 import connect, Connection
 from scripts.variables import *
+
 
 
 class DBDialer(object):
@@ -35,12 +37,21 @@ class DBDialer(object):
         instance.db_responce = []
         
         return instance
-
+    
     def create_database(self) -> None:
         self.db_connector = connect(database=CONFIG["db_path"], uri=False)
         self.data_cursor = self.db_connector.cursor()
         return None
 
+    def delete_record_from_table(self, cmd: str, table: str, marker: str, mark_val: str) -> None:
+        result = None
+        self.sql_cmd = cmd.format(table_name=table, mark=marker, val=mark_val)
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        result = self.data_cursor.execute(self.sql_cmd)
+        CONTROLS["env"].log.debug(f"{result}")
+        self.db_connector.commit()
+        return None
     
     def execute_custom_sql(self, cmd: str, is_select: bool=False, *args) -> object:
         """
@@ -73,7 +84,19 @@ class DBDialer(object):
 
         return None
 
-    def insert_data_to_table(self, table: str, params: dict) -> None:
+    def execute_pragma_statement(self, sql_pragma: str, pragma_table: str) -> list:
+
+        self.sql_cmd = sql_pragma.format(table=pragma_table)
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        result = self.data_cursor.execute(self.sql_cmd).fetchall()
+        result = [arg[1] for arg in result]
+        CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        CONTROLS["env"].log.debug(f"Запрос вернул {len(result) if result is not None else result} кортежей.")
+        
+        return result
+    
+    def insert_data_to_table_back(self, table: str, params: dict) -> None:
         """
         DESCR: execute sql-insert command on given data-table
         REQ: sqlite3.Cursor, sqlite3.Connection
@@ -90,6 +113,19 @@ class DBDialer(object):
         self.db_connector.commit()
         CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
         return None
+
+    def insert_data_to_table(self, cmd: str, table: str, params: list) -> None:
+
+        result = None
+
+        self.sql_cmd = cmd
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        self.data_cursor.execute(self.sql_cmd, params)
+        self.db_connector.commit()
+        CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        
+        return result
 
     def open_db_file(self) -> None:
         self.db_connector = connect(database="file:" + CONFIG["db_path"] + "?mode=rw", uri=True)
@@ -115,7 +151,31 @@ class DBDialer(object):
             CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
         return None
 
-    def select_data_from_table(self, table: str, columns: list) -> list:
+    def select_all_from_categories(self, get_categories_for_op_script: str, operation: str) -> list:
+        result = None
+        self.sql_cmd = get_categories_for_op_script
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        self.data_cursor.execute(self.sql_cmd, (operation,))
+        result = self.data_cursor.fetchall()
+        CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        CONTROLS["env"].log.debug(f"Запрос вернул {len(result) if result is not None else result} кортежей.")
+        
+        return result
+
+    def select_all_from_optypes(self) -> list:
+        result = None
+        self.sql_cmd = ""
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        self.data_cursor.execute(self.sql_cmd, columns)
+        result = self.data_cursor.fetchall()
+        CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        CONTROLS["env"].log.debug(f"Запрос вернул {len(result) if result is not None else result} кортежей.")
+        
+        return result
+
+    def select_all_data_from_table(self, table: str, columns: list) -> list:
         """
         DESCR: execute sql-select command on given data-table
         REQ: sqlite3.Cursor
@@ -135,21 +195,98 @@ class DBDialer(object):
         
         return result
 
-    def update_item_data_on_table(self, table: str, params: dict, item_name: str, item_marker: str) -> None:
+    def select_last_X_records_from_action(self) -> list:
+        result = None
+        self.sql_cmd = ""
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        self.data_cursor.execute(self.sql_cmd, columns)
+        result = self.data_cursor.fetchall()
+        CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        CONTROLS["env"].log.debug(f"Запрос вернул {len(result) if result is not None else result} кортежей.")
+        
+        return result
+    
+    def update_item_data_on_actionslog(self, cmd: str, table: str, params: dict, marker_name: str, marker_val: str) -> None:
         """
         DESCR: execute sql-update command on given data-table
         REQ: sqlite3.Cursor, sqlite3.Connection
         ARGS:
+            -cmd: command text template
             -table: name of the table
             -params: dict of pairs param-value
             -item_name: exact line marker for concrete update
             -item_marker:  exact line marker for concrete update
         """
-        self.sql_cmd = f"UPDATE {table} SET {[table + '.?=?' for _ in params.keys()]}" +\
-                       " WHERE {item_name}={item_marker} ;"
+        #params_vals=", ".join([table + '.?=?' for _ in params.keys()]),
+        """
+        self.sql_cmd = cmd.format(rid=params.get("id"),
+                                  dt=datetime.strptime(params.get("action_datetime"), "%Y-%m-%d %H:%M:%S"),
+                                  op=params.get("optype"),
+                                  cat=params.get("category"),
+                                  amt=params.get("amount"),
+                                  cmt=params.get("comment"),
+                                  mark_name=marker_name,
+                                  mark_val=marker_val)
+        """
+        self.sql_cmd = cmd.format(mark_name=marker_name, mark_val=marker_val)
         CONTROLS["env"].log.debug("Готовится SQL-запрос...")
         CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
-        self.data_cursor.execute(sql=self.sql_cmd, parameters=list(params.keys()) + list(params.values()))
+        #self.data_cursor.execute(self.sql_cmd, list(params.keys()) + list(params.values()))
+        params = [params.get("id"), datetime.strptime(params.get("action_datetime"), "%Y-%m-%d %H:%M:%S"),
+                  params.get("optype"), params.get("category"),
+                  params.get("amount"), params.get("comment"),]
+        self.data_cursor.execute(self.sql_cmd, params)
+        self.db_connector.commit()
+        CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        
+        return None
+
+    def update_item_data_on_categories(self, cmd: str, table: str, params: dict, marker_name: str, marker_val: str) -> None:
+        """
+        DESCR: execute sql-update command on given data-table
+        REQ: sqlite3.Cursor, sqlite3.Connection
+        ARGS:
+            -cmd: command text template
+            -table: name of the table
+            -params: dict of pairs param-value
+            -item_name: exact line marker for concrete update
+            -item_marker:  exact line marker for concrete update
+        """
+        #params_vals=", ".join([table + '.?=?' for _ in params.keys()]),
+        self.sql_cmd = cmd.format(table=table,
+                                  params_vals=", ".join([table + '.' + key + '=' + val for (key,val) in params.items()]),
+                                  mark_name=marker_name,
+                                  mark_val=marker_val)
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        #self.data_cursor.execute(self.sql_cmd, list(params.keys()) + list(params.values()))
+        self.data_cursor.execute(self.sql_cmd)
+        self.db_connector.commit()
+        CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        
+        return None
+
+    def update_item_data_on_operations(self, cmd: str, table: str, params: dict, marker_name: str, marker_val: str) -> None:
+        """
+        DESCR: execute sql-update command on given data-table
+        REQ: sqlite3.Cursor, sqlite3.Connection
+        ARGS:
+            -cmd: command text template
+            -table: name of the table
+            -params: dict of pairs param-value
+            -item_name: exact line marker for concrete update
+            -item_marker:  exact line marker for concrete update
+        """
+        #params_vals=", ".join([table + '.?=?' for _ in params.keys()]),
+        self.sql_cmd = cmd.format(table=table,
+                                  params_vals=", ".join([table + '.' + key + '=' + val for (key,val) in params.items()]),
+                                  mark_name=marker_name,
+                                  mark_val=marker_val)
+        CONTROLS["env"].log.debug("Готовится SQL-запрос...")
+        CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
+        #self.data_cursor.execute(self.sql_cmd, list(params.keys()) + list(params.values()))
+        self.data_cursor.execute(self.sql_cmd)
         self.db_connector.commit()
         CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
         

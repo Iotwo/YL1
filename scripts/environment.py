@@ -2,13 +2,14 @@ import os
 import sys
 import logging
 import datetime
+import csv
 from sqlite3 import connect, Connection
 from scripts.variables import *
 
 
 class Environment(object):
     """
-    DESCR:
+    DESCR: this class describes interaction between the main program and files in OS
     REQUIRE:
     RETURN: 
     """
@@ -24,6 +25,218 @@ class Environment(object):
         return None
 
 
+    def call_db_ddl(self, ddl_path: str) -> int:
+        """
+        DESCR:
+        REQUIRE:
+        RETURN: 
+        """
+        CONTROLS["env"].log.info("Поиск DDL-скрипта базы данных..")
+        CONTROLS["env"].log.debug(f"path={ddl_path}")
+        if os.path.isfile(ddl_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть DDL-скрипт базы данных.")
+        CONTROLS["env"].log.info("DDL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение DDL-скрипта базы данных..")
+        try:
+            with open(file=ddl_path, mode='r', encoding='utf-8') as buffer:
+                CONTROLS["db_bus"].execute_db_ddl(buffer.readlines())
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура DDL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return 3
+        
+        CONTROLS["env"].log.info("DLL-скрипт выполнен.")
+        
+        return 0
+
+    def call_db_purge(self, sql_path: str) -> int:
+        """
+        DESCR:
+        REQUIRE:
+        RETURN: 
+        """
+
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return 2
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта базы данных..")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as buffer:
+                CONTROLS["db_bus"].purge_db(buffer.read())
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return 3
+        
+        CONTROLS["env"].log.info("SQL-скрипт выполнен.")
+        
+        return 0
+
+    def call_delete_rec_command(self, sql_path: str, table_name: str, del_marker: str, del_val: str) -> int:
+        
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return 2
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта базы данных..")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as buffer:
+                CONTROLS["db_bus"].delete_record_from_table(buffer.read(), table_name, del_marker, del_val)
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return 3
+        
+        CONTROLS["env"].log.info("SQL-скрипт выполнен.")
+        
+        return 0
+    
+    def call_insert_new_rec(self, sql_path: str, table_name: str, values: list) -> int:
+        
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return 2
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта базы данных..")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as buffer:
+                CONTROLS["db_bus"].insert_data_to_table(buffer.read(), table_name, values)
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return 3
+        
+        CONTROLS["env"].log.info("SQL-скрипт выполнен.")
+        
+        return 0
+
+    def call_select_last_x_records(self, sql_path: str) -> object:
+        """
+        """
+        result = None
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return None
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта базы данных..")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as buffer:
+                result = CONTROLS["db_bus"].execute_custom_sql(buffer.read(), True)
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return None
+        
+        CONTROLS["env"].log.info("SQL-скрипт выполнен.")
+        
+        return result
+
+    def call_select_cats_of_op(self, sql_path:str, op_type: str) -> object:
+
+        result = None
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return None
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта базы данных..")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as buffer:
+                result = CONTROLS["db_bus"].select_all_from_categories(buffer.read(), op_type)
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return None
+        
+        return result
+
+    def call_sql_select_cmd(self, sql_path: str) -> object:
+        """
+        """
+        result = None
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return None
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта базы данных..")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as buffer:
+                result = CONTROLS["db_bus"].execute_custom_sql(buffer.read(), True)
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return None
+        
+        CONTROLS["env"].log.info("SQL-скрипт выполнен.")
+        
+        return result
+
+    def call_update_record_in_table(self, sql_path: str, table_name:str, upd_params: dict, key_name: str, key_val: str) -> int:
+        """
+        """
+        
+        result = None
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return 2
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта базы данных..")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as buffer:
+                if table_name == "Actions_log":
+                    result = CONTROLS["db_bus"].update_item_data_on_actionslog(buffer.read(), table_name, upd_params, key_name, key_val)
+                elif table_name == "Categories":
+                    result = CONTROLS["db_bus"].update_item_data_on_categories(buffer.read(), table_name, upd_params, key_name, key_val)
+                elif table_name == "Operations":
+                    result = CONTROLS["db_bus"].update_item_data_on_operations(buffer.read(), table_name, upd_params, key_name, key_val)
+                    
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return 3
+        
+        CONTROLS["env"].log.info("SQL-скрипт выполнен.")
+        
+        return result
+    
     def check_config_file_exists(self) -> int:
         """
         DESCR:
@@ -86,6 +299,53 @@ class Environment(object):
 
         return None
 
+    def create_report_file(self, r_type: str, r_data: list) -> None:
+        """
+        """
+        result = None
+        CONTROLS["env"].log.info("Формирование отчёта..")
+        try:
+            r_name = f"{LOCAL_VARS['report_dir']}Y1_{datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}_report."
+            if r_type == "csv":
+                r_name += "csv"
+                CONTROLS["env"].log.debug(f"Отчёт в формате CSV.")
+                with open(file=r_name, mode='w', encoding="utf-8-sig", newline='') as repf:
+                    csv_type= csv.writer(repf, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
+                    for row in r_data:
+                        csv_type.writerow(row)
+                    repf.flush()
+            elif r_type == "txt":
+                r_name += "txt"
+                with open(file=r_name, mode='w', encoding="utf-8-sig") as repf:
+                    repf.write('=' * 70 + '\n')
+                    repf.write("Расходы за сегодня:"+ '\n')
+                    repf.write('=' * 70 + '\n')
+                    repf.write("Категория".ljust(50) + "Значение".ljust(16) + '\n')
+                    for row in r_data:
+                        if "Расход" in row:
+                            repf.write(f"{str(row[1]).ljust(50)}{str(row[2]).ljust(2)}" + '\n')
+                    repf.write('\n')
+                    repf.write('=' * 70 + '\n')
+                    repf.write("Доходы за сегодня:" + '\n')
+                    repf.write('=' * 70 + '\n')
+                    repf.write("Категория".ljust(50) + "Значение".ljust(16) + '\n')
+                    for row in r_data:
+                        if "Доход" in row:
+                            repf.write(f"{str(row[1]).ljust(50)}{str(row[2]).ljust(2)}" + '\n')
+                    rep.flush()
+                CONTROLS["env"].log.debug(f"Отчёт {r_name} сформирован.")
+            else:
+                CONTROLS["env"].log.debug(f"Error code: 5 - {ERRORS[5]}")
+                CONTROLS["env"].log.error("Передано неверное расширение файла отчёта!")
+                return 5 
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось создать файл отчёта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+            return 2
+        
+        return 0
+    
     def initiate_default_config(self) -> None:
         """
         DESCR:
@@ -109,7 +369,7 @@ class Environment(object):
         REQUIRE:
         RETURN: 
         """
-        with open(file=f".\\logs\\Y1_{datetime.datetime.now().date()}_app.log", mode='a', encoding="utf-8") as f:
+        with open(file=f"{LOCAL_VARS['log_dir']}Y1_{datetime.datetime.now().date()}_app.log", mode='a', encoding="utf-8") as f:
             f.write("")
         
         logging.basicConfig(filename=f".\\logs\\Y1_{datetime.datetime.now().date()}_app.log",
@@ -175,6 +435,7 @@ class Environment(object):
         CONTROLS["env"].log.debug("Чтение базы данных...")
         try:
             with open(file=f"{os.getcwd()}\\sql\\get_datatables_from_db.sql", mode='r', encoding="utf-8") as query:
+                CONTROLS["env"].log.debug(f"file={os.getcwd()}\\sql\\get_datatables_from_db.sql")
                 query.seek(0)
                 CONTROLS["env"].log.debug("Запрос к базе...")
                 result = CONTROLS["db_bus"].execute_custom_sql(cmd=query.read(), is_select=True)
@@ -200,10 +461,11 @@ class Environment(object):
                 CONTROLS["env"].log.debug("Таблицы базы соответствуют схеме.")
             
             with open(file=f"{os.getcwd()}\\sql\\get_columns_from_table_template.sql", mode='r', encoding="utf-8") as query:
+                CONTROLS["env"].log.debug(f"file={os.getcwd()}\\sql\\get_columns_from_table_template.sql")
                 for table in LOCAL_VARS["db_tables"].keys():
                     query.seek(0)
                     CONTROLS["env"].log.debug("Запрос к базе...")
-                    result = CONTROLS["db_bus"].execute_custom_sql(cmd=query_read, is_select=False, args=[table])
+                    result = CONTROLS["db_bus"].execute_pragma_statement(query.read(), table,)
                     CONTROLS["env"].log.debug("Запрос выполнен.")
                     CONTROLS["env"].log.debug(f"Анализ структуры таблицы {table}...")
                     if result is None:
@@ -219,7 +481,7 @@ class Environment(object):
                         CONTROLS["env"].log.error("Неправильная стуктура базы данных - неверное количество атрибутов.")
                         return 3
                     for line in result:
-                        if line[1] not in LOCAL_VARS["db_tables"][table]:
+                        if line not in LOCAL_VARS["db_tables"][table]:
                             CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
                             CONTROLS["env"].log.error("Неправильная стуктура базы данных - атрибуты не совпадают со схемой.")
                             return 3
@@ -260,7 +522,7 @@ class Environment(object):
                     dst.write(f"{key}={value}\n")
                 dst.flush()  
         except Exception as ex:
-            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.debug(f"Error code: 255 - {ERRORS[255]}")
             CONTROLS["env"].log.error("Не удалось сохранить значения конфигурации в файл.")
             CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
 

@@ -1,10 +1,13 @@
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtGui import QDoubleValidator
+from os import getcwd, startfile
+import csv
+from datetime import datetime
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox, QListWidget, QListWidgetItem
+from PyQt5.QtGui import QDoubleValidator, QMouseEvent
 from PyQt5.QtCore import QLocale
 from forms.main_form_ui import Ui_MainForm
 from forms.settings_form_ui import Ui_SettingsForm
 from forms.settings_form_form import SettingsFormIf
-from scripts.variables import CONTROLS, LOCAL_VARS
+from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG
 
 
 class MainFormIf(QMainWindow, Ui_MainForm):
@@ -18,31 +21,206 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         super().setupUi(self,)
         super().retranslateUi(self,)
         self.init_ui()
+
+        CONTROLS["env"].log.debug("Инициализация формы настроек.")
+        self.settings = SettingsFormIf(self)
+        self.import_configuration()
         
-        self.settings = SettingsFormIf()
-        
-        CONTROLS["env"].log.debug("Главная форма приложения загружена.")
+        CONTROLS["env"].log.debug("Загрузка последних записей.")
+        self.load_operation_types()
+        self.load_last_X_actions()
+        self.table_state = LOCAL_VARS["table_states"][0]
+        CONTROLS["env"].log.debug("Главная форма приложения инициализирована.")
+        self.app_status_bar.clearMessage()
+        self.app_status_bar.showMessage(f"Приложение готово. БД подключена.")
         
         return None
 
-    def call_edit_sups_form(self):
+    def __new__(cls, *args, **kwargs) -> object:
+        instance = super().__new__(cls)
+        instance.settings = None
+        instance.table_state = None
+        instance.selected_row_data = None
+        instance.selected_row_updated_data = None
+        CONTROLS["env"].log.debug(f"Создан экземпляр #{id(instance)}-{type(instance)}")
+        
+        return instance
+
+    def add_new_rec(self) -> None:
+        CONTROLS["env"].log.debug(f"Начат процесс добавления записи, проверка заполненности всех атрибутов...")
+        
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Warning)
+        msg.setText("Не хватает данных\n для вставки новой записи!")
+        msg.setWindowTitle("Вставка записи.")
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        result = None
+        
+        if self.opSelection_cmbBox.currentIndex() == -1:
+            retval = msg.exec()
+            CONTROLS["env"].log.debug("Вставка записи не произведена, не хватает данных.")
+            return result
+        if self.catSelection_list.currentRow() == -1:
+            retval = msg.exec()
+            CONTROLS["env"].log.debug("Вставка записи не произведена, не хватает данных.")
+            return result
+        if self.amount_lineEd.text() == "":
+            retval = msg.exec()
+            CONTROLS["env"].log.debug("Вставка записи не произведена, не хватает данных.")
+            return result
+        
+        ins_data = [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), self.opSelection_cmbBox.currentText(),
+                    self.catSelection_list.currentItem().text(), self.amount_lineEd.text()]
+        CONTROLS["env"].log.info("Вставка новой записи...")
+        CONTROLS["env"].log.debug(f"Данные для вставки: {ins_data}")
+        LOCAL_VARS["last_err_code"] = CONTROLS["env"].call_insert_new_rec(f"{getcwd()}\\sql\\insert_value_into_actions.sql", "Actions_log", ins_data)
+        if LOCAL_VARS["last_err_code"] == 0:
+            CONTROLS["env"].log.info("Добавлена запись.")
+        else:
+            CONTROLS["env"].log.warn("Не удалось добавить запись.")
+
+        self.load_last_X_actions()
+        
+        return result
+
+    def call_edit_sups_form(self) -> None:
         self.supports.show()
 
-    def call_settings_form(self):
-        self.settings.show()
+        return None
 
-    def closeEvent(self, event):
-        if self.close:
-            CONTROLS["env"].log.debug("Закрытие главной формы приложения.")
-            try:
-                CONTROLS["env"].log.debug("Освобождение ресурсов формы...")
-                #local_vars.DB_CONNECTOR.close()
-                #CONTROLS["env"].log.debug('Подключение к базе данных закрыто.')
-            except Exception as ex:
-                CONTROLS["env"].log.error('Ошибка при завершении работы с базой данных.')
-            CONTROLS["env"].log.debug("Главная форма закрыта. Попытка выхода из приложения...")
-        else:
+    def call_info(self) -> None:
+        startfile(f"{getcwd()}\\{LOCAL_VARS['help_path']}")
+        
+        return None
+
+    def call_settings_form(self) -> None:
+        self.settings.show()
+        CONTROLS["env"].log.debug("Открыта форма настроек.")
+
+        return None
+    
+    def closeEvent(self, event) -> None:
+        """
+        NOTE: PROCESS THIS!!!
+        """  
+        CONTROLS["env"].log.debug("Закрытие главной формы приложения.")
+        try:
+            CONTROLS["env"].log.debug("Освобождение ресурсов формы...")
+            retval = QMessageBox.question(self, "Выход", "Закрыть приложение?",
+                                          QMessageBox.Close | QMessageBox.Cancel, QMessageBox.Cancel)
             event.ignore()
+            if retval == QMessageBox.Close:
+                event.accept()
+            else:
+                event.ingore()
+                
+        except Exception as ex:
+            pass
+
+        return None
+
+    def complete_record_edit_in_backlog(self, row_index, col_index) -> None:
+        if self.table_state == LOCAL_VARS["table_states"][1]:
+            self.selected_row_updated_data = [self.backlog_tableWidget.item(row_index, j).text()
+                                              for j in range(self.backlog_tableWidget.columnCount())]
+            CONTROLS["env"].log.debug(f"Изменённые значения: {self.selected_row_updated_data}.")
+            upd_p = {LOCAL_VARS["db_tables"]["Actions_log"][i]: self.selected_row_updated_data[i]
+                     for i in range(len(LOCAL_VARS["db_tables"]["Actions_log"]))}
+            CONTROLS["env"].log.debug(f"Кортеж изменений: {upd_p}")
+            
+            LOCAL_VARS["last_err_code"] = CONTROLS["env"].call_update_record_in_table(f"{getcwd()}\\sql\\update_record_in_table_actionslog.sql",
+                                                                                      "Actions_log", upd_p, "id", str(self.selected_row_updated_data[0]))
+            self.table_state = LOCAL_VARS["table_states"][0]
+            CONTROLS["env"].log.debug(f"Таблица в состоянии {LOCAL_VARS['RU_table_states'][0]}")
+            self.app_status_bar.clearMessage()
+            self.app_status_bar.showMessage(f"Состояние таблицы - {LOCAL_VARS['RU_table_states'][0]}")
+            self.backlog_tableWidget.selectRow(None)
+            self.selected_row_data = None 
+            self.selected_row_updated_data = None
+            self.app_status_bar.clearMessage()
+            self.app_status_bar.showMessage(f"Приложение готово. БД подключена.")
+
+        return None
+
+    def decline_changes_and_clear(self) -> None:
+        result = None
+        if self.table_state == LOCAL_VARS["table_states"][1]:
+            self.opSelection_cmbBox.selectIndex(-1)
+            self.catSelection_list.selectRow(-1)
+            self.amount_lineEd.setText("")
+        elif self.table_state == LOCAL_VARS["table_states"][0]:
+            CONTROLS["env"].log.info("Попытка удалить запись...")
+            CONTROLS["env"].log.debug(f"Удаляемая запись: {self.selected_row_data}")
+            LOCAL_VARS["last_err_code"] = CONTROLS["env"].call_delete_rec_command(f"{getcwd()}\\sql\\delete_record_from_table.sql", "Actions_log", "id", str(self.selected_row_data[0]))
+            if LOCAL_VARS["last_err_code"] == 0:
+                CONTROLS["env"].log.info("Запись удалена.")
+            else:
+                CONTROLS["env"].log.error("Во время удаления записи возникла ошибка.")
+            self.load_last_X_actions()
+            self.backlog_tableWidget.selectRow(None)
+            self.selected_row_data = None
+            self.selected_row_updated_data = None
+            self.app_status_bar.clearMessage()
+            self.app_status_bar.showMessage(f"Приложение готово. БД подключена.")
+        return None
+
+    def export_report_data(self, data: list) -> None:
+        """
+            DESC:
+        """
+        return None
+
+    def form_report_all_time(self) -> None:
+        CONTROLS["env"].log.info("Построение отчёта за всё время в формате csv...")
+        result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_all_time.sql")
+        if result is None:
+            CONTROLS["env"].log.warn("Во время построения отчёта произошла ошибка.")
+            return None
+        LOCAL_VARS["last_err_code"] = CONTROLS["env"].create_report_file("csv", result)
+        if LOCAL_VARS["last_err_code"] != 0:
+            CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
+            return None
+        CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+        return None
+
+    def form_report_last_month(self) -> None:
+        CONTROLS["env"].log.info("Построение отчёта за последний месяц в формате csv...")
+        result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_last_month.sql")
+        if result is None:
+            CONTROLS["env"].log.warn("Во время построения отчёта произошла ошибка.")
+            return None
+        LOCAL_VARS["last_err_code"] = CONTROLS["env"].create_report_file("csv", result)
+        if LOCAL_VARS["last_err_code"] != 0:
+            CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
+            return None
+        CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+        return None
+
+    def form_report_last_week(self) -> None:
+        CONTROLS["env"].log.info("Построение отчёта за последние 7 дней в формате csv...")
+        result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_last_week.sql")
+        if result is None:
+            CONTROLS["env"].log.warn("Во время построения отчёта произошла ошибка.")
+            return None
+        LOCAL_VARS["last_err_code"] = CONTROLS["env"].create_report_file("csv", result)
+        if LOCAL_VARS["last_err_code"] != 0:
+            CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
+            return None
+        CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+        return None
+    
+    def form_report_today(self) -> None:
+        CONTROLS["env"].log.info("Построение отчёта за день в формате csv...")
+        result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_today.sql")
+        if result is None:
+            CONTROLS["env"].log.warn("Во время построения отчёта произошла ошибка.")
+            return None
+        LOCAL_VARS["last_err_code"] = CONTROLS["env"].create_report_file("csv", result)
+        if LOCAL_VARS["last_err_code"] != 0:
+            CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
+            return None
+        CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+        return None
 
     def init_ui(self) -> None:
         self.allow_float_on_amt_lineEd = QDoubleValidator(0.00,9999999999999.99,2)
@@ -53,10 +231,78 @@ class MainFormIf(QMainWindow, Ui_MainForm):
 
         self.set_column_headers()
 
+        self.backlog_tableWidget.cellClicked.connect(self.select_data_from_row)
+        self.backlog_tableWidget.cellDoubleClicked.connect(self.set_record_edit_in_backlog)
+        self.backlog_tableWidget.cellChanged.connect(self.complete_record_edit_in_backlog)
         self.menu_settings_btn.triggered.connect(self.call_settings_form)
+        self.menu_call_info_btn.triggered.connect(self.call_info)
+        self.menu_report_today_btn.triggered.connect(self.form_report_today)
+        self.menu_report_last_week_btn.triggered.connect(self.form_report_last_week)
+        self.menu_report_last_month_btn.triggered.connect(self.form_report_last_month)
+        self.menu_report_all_time_btn.triggered.connect(self.form_report_all_time)
+        self.opSelection_cmbBox.currentIndexChanged.connect(self.load_categories_of_optype)
+        self.defVal1_btn.clicked.connect(self.set_def_val_1_to_amount)
+        self.defVal2_btn.clicked.connect(self.set_def_val_2_to_amount)
+        self.defVal3_btn.clicked.connect(self.set_def_val_3_to_amount)
+        self.defVal4_btn.clicked.connect(self.set_def_val_4_to_amount)
+        self.defVal5_btn.clicked.connect(self.set_def_val_5_to_amount)
+        self.defVal6_btn.clicked.connect(self.set_def_val_6_to_amount)
+        self.clear_btn.clicked.connect(self.decline_changes_and_clear)
+        self.addRec_btn.clicked.connect(self.add_new_rec)
         
         return None
 
+    def import_configuration(self) -> None:
+        self.defVal1_btn.setText(self.settings.defBtn1_lnEd.text())
+        self.defVal2_btn.setText(self.settings.defBtn2_lnEd.text())
+        self.defVal3_btn.setText(self.settings.defBtn3_lnEd.text())
+        self.defVal4_btn.setText(self.settings.defBtn4_lnEd.text())
+        self.defVal5_btn.setText(self.settings.defBtn5_lnEd.text())
+        self.defVal6_btn.setText(self.settings.defBtn6_lnEd.text())
+        
+        return None    
+
+    def load_categories_of_optype(self, cmb_index) -> None:
+
+        self.catSelection_list.clear()
+        rows = CONTROLS["env"].call_select_cats_of_op(f"{getcwd()}\\sql\\get_cats_of_operation.sql", self.opSelection_cmbBox.currentText())
+        for row in rows:
+            self.catSelection_list.addItem(QListWidgetItem(row[0]))
+        
+        return None
+
+    def load_operation_types(self) -> None:
+        self.opSelection_cmbBox.clear()
+        rows = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\get_all_operations.sql")
+        for row in rows:
+            self.opSelection_cmbBox.addItem(row[0])
+        
+    
+    def load_last_X_actions(self) -> None:
+        """
+        DESCR: load last X actions from Action_log table into tabWidget
+        REQUIRE: QTableWidgetItem, QTableWidget, os.getcwd
+        """
+
+        rows = CONTROLS["env"].call_select_last_x_records(f"{getcwd()}\\sql\\get_first_x_actions.sql")
+        # next we must place row data into table
+        self.backlog_tableWidget.clearContents()
+        self.backlog_tableWidget.setRowCount(len(rows))
+        rows = [tuple(map(str, [elem for elem in row])) for row in rows]
+        # As soon as tableWidget can be populated only cell-by-cell...
+        for i in range(len(rows)):
+            for j in range(len(rows[i])):
+                self.backlog_tableWidget.setItem(i, j, QTableWidgetItem(rows[i][j]))
+                
+        return None
+
+    def select_data_from_row(self, row_index) -> None:
+        CONTROLS["env"].log.debug(f"Левый одиночный клик мыши в таблице в ряд {row_index}")
+        self.selected_row_data = [self.backlog_tableWidget.item(row_index, j).text()
+                                  for j in range(self.backlog_tableWidget.columnCount())]
+        CONTROLS["env"].log.debug(f"Выбран диапазон значений: {self.selected_row_data} из таблицы.")
+        
+        return None
 
     def set_column_headers(self) -> None:
         self.backlog_tableWidget.setHorizontalHeaderLabels(LOCAL_VARS["RU_db_tables"]["Actions_log"])
@@ -69,207 +315,67 @@ class MainFormIf(QMainWindow, Ui_MainForm):
 
         return None
 
+    def set_def_val_1_to_amount(self) -> None:
+        self.amount_lineEd.setText("")
+        self.amount_lineEd.setText(str(CONFIG["def_btn1"]))
+        CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn1']} записано в поле ввода.")
+        
+        return None
 
+    def set_def_val_2_to_amount(self) -> None:
+        self.amount_lineEd.setText("")
+        self.amount_lineEd.setText(str(CONFIG["def_btn2"]))
+        CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn2']} записано в поле ввода.")
+        
+        return None
 
+    def set_def_val_3_to_amount(self) -> None:
+        self.amount_lineEd.setText("")
+        self.amount_lineEd.setText(str(CONFIG["def_btn3"]))
+        CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn3']} записано в поле ввода.")
+        
+        return None
 
+    def set_def_val_4_to_amount(self) -> None:
+        self.amount_lineEd.setText("")
+        self.amount_lineEd.setText(str(CONFIG["def_btn4"]))
+        CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn4']} записано в поле ввода.")
+        
+        return None
 
+    def set_def_val_5_to_amount(self) -> None:
+        self.amount_lineEd.setText("")
+        self.amount_lineEd.setText(str(CONFIG["def_btn5"]))
+        CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn5']} записано в поле ввода.")
+        
+        return None
 
+    def set_def_val_6_to_amount(self) -> None:
+        self.amount_lineEd.setText("")
+        self.amount_lineEd.setText(str(CONFIG["def_btn6"]))
+        CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn6']} записано в поле ввода.")
+        
+        return None
 
+    def set_record_edit_in_backlog(self, row_index, column_index) -> None:
+        CONTROLS["env"].log.debug(f"Левый двойной клик мыши в таблице в ряд {row_index}")
+        if self.table_state == LOCAL_VARS["table_states"][0]:
+            self.table_state = LOCAL_VARS["table_states"][1]
+            self.app_status_bar.clearMessage()
+            self.app_status_bar.showMessage(f"Состояние таблицы - {LOCAL_VARS['RU_table_states'][1]}")
+            CONTROLS["env"].log.debug(f"Редактируется ячейка {row_index}:{column_index}.")
+            CONTROLS["env"].log.debug(f"Исходные значения: {self.selected_row_data}.")
 
-    def load_operations(self):
-        self.rec_op_selector_cmb.clear()
-        try:
-            query_result = supportive_vestments.sql_select_all_operations(local_vars.DB_CURSOR)
-            lines_cnt = len(query_result)
-            if lines_cnt > 0:
-                for i in range(lines_cnt):
-                    self.rec_op_selector_cmb.addItem(query_result[i][1])
-                    self.OPERATION_IDs.append(int(query_result[i][0]))
-        except Exception as ex:
-            print(ex)
-            return -2
-
-    def load_categories(self):
-        self.rec_cat_selector_cmb.clear()
-        try:
-            query_result = supportive_vestments.sql_select_all_categories(local_vars.DB_CURSOR)
-            lines_cnt = len(query_result)
-            if lines_cnt > 0:
-                for i in range(lines_cnt):
-                    if query_result[i][1] == 'Пополнения':
-                        self.DEPOSIT_ID = int(query_result[i][0])
-                    self.rec_cat_selector_cmb.addItem(query_result[i][1])
-                    self.CATEGORIES_IDs.append(int(query_result[i][0]))
-        except Exception as ex:
-            print(ex)
-            return -2
-
-    def load_last_actions(self):
-        lines_cnt = 0
-        try:
-            for _ in range(self.actions_table.rowCount()):
-                self.actions_table.removeRow(self.actions_table.rowCount() - 1)
-            query_result = supportive_vestments.sql_select_all_actions(local_vars.DB_CURSOR)
-            lines_cnt = len(query_result)
-            if lines_cnt > 0:
-                self.actions_table.setRowCount(lines_cnt)
-                for i in range(lines_cnt):
-                    for j in range(len(self.COLUMN_NAMES)):
-                        self.actions_table.setItem(i, j, QTableWidgetItem(str(query_result[i][j + 1])))
-        except Exception as ex:
-            print(ex)
-            return -1
-
-    def set_cat_for_deposit(self):
-        if self.rec_op_selector_cmb.currentText() == 'Поступления':
-            self.rec_cat_selector_cmb.setCurrentIndex(self.CATEGORIES_IDs.index(self.DEPOSIT_ID))
-
+        return None
 
     
 
-
-    
-
-
-    def form_report_today(self):
-        logging.debug('Формируется отчёт за день...')
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Information)
-        pros_list = supportive_vestments.sql_get_deposits_today(local_vars.DB_CURSOR)
-        cons_list = supportive_vestments.sql_get_losses_today(local_vars.DB_CURSOR)
-        with open(file=f'.\\reports\\report_at_{datetime.datetime.now().date()}.txt', mode='w', encoding='utf-8-sig') as rep:
-            rep.write('=' * 70 + '\n')
-            rep.write('Расходы за сегодня:'+ '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in cons_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.write('\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Доходы за сегодня:' + '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in pros_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.flush()
-        pros = sum([float(attr[1]) for attr in pros_list])
-        cons = sum([float(attr[1]) for attr in cons_list])
-        msg.setText(f'Траты за сегодня: {cons} \nПополнения за сегодня: {pros}.\nОтчёт сохранён в директории программы.')
-        msg.setWindowTitle("Отчёт готов.")
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        retval = msg.exec()
-
-        return None
-
-    def form_report_week(self):
-        logging.debug('Формируется отчёт за неделю...')
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Information)
-        pros_list = supportive_vestments.sql_get_deposits_last_week(local_vars.DB_CURSOR)
-        cons_list = supportive_vestments.sql_get_losses_last_week(local_vars.DB_CURSOR)
-        with open(file=f'.\\reports\\report_at_{datetime.datetime.now().date()}.txt', mode='w',
-                  encoding='utf-8-sig') as rep:
-            rep.write('=' * 70 + '\n')
-            rep.write('Расходы за последние 7 дней:' + '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in cons_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.write('\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Доходы за последние 7 дней:' + '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in pros_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.flush()
-        pros = sum([float(attr[1]) for attr in pros_list])
-        cons = sum([float(attr[1]) for attr in cons_list])
-        msg.setText(
-            f'Траты за последние 7 дней: {cons} \nПополнения за последние 7 дней: {pros}.\nОтчёт сохранён в директории программы.')
-        msg.setWindowTitle("Отчёт готов.")
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        retval = msg.exec()
-
-        return None
-
-    def form_report_month(self):
-        logging.debug('Формируется отчёт за месяц...')
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Information)
-        pros_list = supportive_vestments.sql_get_deposits_last_month(local_vars.DB_CURSOR)
-        cons_list = supportive_vestments.sql_get_losses_last_month(local_vars.DB_CURSOR)
-        with open(file=f'.\\reports\\report_at_{datetime.datetime.now().date()}.txt', mode='w',
-                  encoding='utf-8-sig') as rep:
-            rep.write('=' * 70 + '\n')
-            rep.write('Расходы за последние 30 дней:' + '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in cons_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.write('\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Доходы за последние 30 дней:' + '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in pros_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.flush()
-        pros = sum([float(attr[1]) for attr in pros_list])
-        cons = sum([float(attr[1]) for attr in cons_list])
-        msg.setText(
-            f'Траты за последние 30 дней: {cons} \nПополнения за последние 30 дней: {pros}.\nОтчёт сохранён в директории программы.')
-        msg.setWindowTitle("Отчёт готов.")
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        retval = msg.exec()
-
-        return None
-
-    def form_report_all(self):
-        logging.debug('Формируется отчёт за весь период работы программы.')
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Information)
-        pros_list = supportive_vestments.sql_get_deposits_all_time(local_vars.DB_CURSOR)
-        cons_list = supportive_vestments.sql_get_losses_all_time(local_vars.DB_CURSOR)
-        with open(file=f'.\\reports\\report_at_{datetime.datetime.now().date()}.txt', mode='w',
-                  encoding='utf-8-sig') as rep:
-            rep.write('=' * 70 + '\n')
-            rep.write('Расходы за всё время:' + '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in cons_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.write('\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Доходы за всё время:' + '\n')
-            rep.write('=' * 70 + '\n')
-            rep.write('Категория'.ljust(50) + 'Цена'.ljust(16) + '\n')
-            for attr in pros_list:
-                rep.write(f'{str(attr[0]).ljust(50)}{str(attr[1]).ljust(2)}' + '\n')
-            rep.flush()
-        pros = sum([float(attr[1]) for attr in pros_list])
-        cons = sum([float(attr[1]) for attr in cons_list])
-        msg.setText(
-            f'Траты за всё время: {cons} \nПополнения за всё время: {pros}.\nОтчёт сохранён в директории программы.')
-        msg.setWindowTitle("Отчёт готов.")
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        retval = msg.exec()
-
-        return None
-
-    def call_info(self):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Information)
-        msg.setText("Спасибо за пользование программой!\nИнструкция в руководстве.")
-        msg.setWindowTitle("Справка.")
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        retval = msg.exec()
-        return None
+    #=====================================
 
     def call_export_form(self):
         self.reports.show()
 
-    def add_new_rec(self):
+    def add_new_rec_back(self):
         logging.debug('Попытка добавить новую запись...')
         cat_chosen = True if self.rec_cat_selector_cmb.currentIndex() != -1 else False
         op_chosen = True if self.rec_op_selector_cmb.currentIndex() != -1 else False
@@ -339,4 +445,3 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             logging.warning('В ходе удаления возникли ошибки.')
 
         return None
-

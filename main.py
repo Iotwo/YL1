@@ -2,6 +2,7 @@ import sys
 import os
 import logging
 import datetime
+import csv
 from PyQt5 import QtCore, QtWidgets 
 from forms.main_form_ui import Ui_MainForm
 from forms.main_form_form import MainFormIf
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     sys.excepthook = CONTROLS["env"].redirect_except_hook
     CONTROLS["env"].log.debug("Настроен перехват внутренних событий PyQt.")
     
-    CONTROLS["env"].log.debug("Поиск файла конфигурации...")
+    CONTROLS["env"].log.info("Поиск файла конфигурации...")
     if CONTROLS["env"].check_config_file_exists() != 0:
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     else:
         CONTROLS["env"].load_config_from_file()
 
-    CONTROLS["env"].log.debug("Поиск файла базы данных...")
+    CONTROLS["env"].log.info("Поиск файла базы данных...")
     if CONTROLS["env"].check_db_file_exists() != 0:
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
@@ -59,14 +60,14 @@ if __name__ == "__main__":
         msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
         retval = msg.exec()
         CONTROLS["env"].create_db_file()
-        CONTROLS["db_bus"].execute_db_ddl(open(file=f"{os.getcwd()}\\sql\\ddl.sql", mode='r', encoding="utf-8").readlines())
+        CONTROLS["env"].call_db_ddl(f"{os.getcwd()}\\sql\\ddl.sql")
     else:
         LOCAL_VARS["last_err_code"] = CONTROLS["env"].open_db_file()
         if LOCAL_VARS["last_err_code"] != 0:
-            CONTROLS["db_bus"].purge_db(open(file=f"{os.getcwd()}\\sql\\get_datatables_from_db.sql", mode='r', encoding="utf-8").read())
-            CONTROLS["db_bus"].execute_db_ddl(open(file=f"{os.getcwd()}\\sql\\ddl.sql", mode='r', encoding="utf-8").readlines())
+            CONTROLS["env"].call_db_purge(f"{os.getcwd()}\\sql\\get_datatables_from_db.sql")
+            CONTROLS["env"].call_db_ddl(f"{os.getcwd()}\\sql\\ddl.sql")
     
-    CONTROLS["env"].log.debug("Инициализация главной формы приложения...")
+    CONTROLS["env"].log.info("Инициализация главной формы приложения...")
     m_form = MainFormIf()
     m_form.show()
     CONTROLS["env"].log.info("Приложение готово к работе.")
@@ -78,7 +79,10 @@ if __name__ == "__main__":
     CONTROLS["env"].log.debug(f"{';'.join(['='.join((str(key), str(val),)) for key, val in CONFIG.items()])}")
     CONTROLS["env"].log.debug(f"CONTROLS")
     CONTROLS["env"].log.debug(f"{';'.join(['='.join((str(key), str(val),)) for key, val in CONTROLS.items()])}")
-    CONTROLS["env"].log.info(f"Код выхода: {LOCAL_VARS['last_err_code']}")
+    if LOCAL_VARS["last_err_code"] == 0:
+        CONTROLS["env"].log.info(f"Код выхода: {LOCAL_VARS['last_err_code']}")
+    else:
+        CONTROLS["env"].log.error(f"Код выхода: {LOCAL_VARS['last_err_code']}")
 
     del(CONTROLS["db_bus"])
     logging.shutdown()
