@@ -564,7 +564,7 @@
     <property name="title">
      <string>Действия</string>
     </property>
-    <addaction name="menu_export_btn"/>
+    <addaction name="menu_import_btn"/>
     <addaction name="menu_settings_btn"/>
    </widget>
    <addaction name="main_menu_tables_btn"/>
@@ -644,7 +644,7 @@
     <string>Редактор записей</string>
    </property>
   </action>
-  <action name="menu_export_btn">
+  <action name="menu_import_btn">
    <property name="text">
     <string>Импорт данных</string>
    </property>

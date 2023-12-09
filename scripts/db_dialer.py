@@ -96,22 +96,21 @@ class DBDialer(object):
         
         return result
     
-    def insert_data_to_table_back(self, table: str, params: dict) -> None:
+    def insert_multiple_data_to_actions_log(self, rows_coll: list, cmd: str) -> None:
         """
-        DESCR: execute sql-insert command on given data-table
+        DESCR: 
         REQ: sqlite3.Cursor, sqlite3.Connection
         ARGS:
-            -table: name of the table
-            -params: dict of pairs param-value
+            -: name of the table
         """
         result = None
-        self.sql_cmd = f"INSERT INTO {table} ({', '.join(['?' for key in params.keys()])}) " +\
-                       f"VALUES ({', '.join(['?' for value in params.values()])});"
+        self.sql_cmd = cmd
         CONTROLS["env"].log.debug("Готовится SQL-запрос...")
         CONTROLS["env"].log.debug(f"SQL:{self.sql_cmd}")
-        self.data_cursor.execute(self.sql_cmd, list(params.keys()) + list(params.values()))
+        self.data_cursor.executemany(self.sql_cmd, rows_coll)
         self.db_connector.commit()
         CONTROLS["env"].log.debug(f"{self.data_cursor.description}")
+        
         return None
 
     def insert_data_to_table(self, cmd: str, table: str, params: list) -> None:

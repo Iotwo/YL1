@@ -1,7 +1,7 @@
 from os import getcwd, startfile
 import csv
 from datetime import datetime
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox, QListWidget, QListWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox, QListWidget, QListWidgetItem, QFileDialog
 from PyQt5.QtGui import QDoubleValidator, QMouseEvent
 from PyQt5.QtCore import QLocale
 from forms.main_form_ui import Ui_MainForm
@@ -240,6 +240,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         self.menu_report_last_week_btn.triggered.connect(self.form_report_last_week)
         self.menu_report_last_month_btn.triggered.connect(self.form_report_last_month)
         self.menu_report_all_time_btn.triggered.connect(self.form_report_all_time)
+        self.menu_import_btn.triggered.connect(self.import_ext_data)
         self.opSelection_cmbBox.currentIndexChanged.connect(self.load_categories_of_optype)
         self.defVal1_btn.clicked.connect(self.set_def_val_1_to_amount)
         self.defVal2_btn.clicked.connect(self.set_def_val_2_to_amount)
@@ -261,6 +262,34 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         self.defVal6_btn.setText(self.settings.defBtn6_lnEd.text())
         
         return None    
+
+    def import_ext_data(self) -> None:
+
+        retval = QMessageBox.warning(self, "Импорт",
+                                     "Внимание!\nДля корректного импорта файл должен\nотвечать следующим требованиям:\n" +\
+                                     "\" - символ цитирования, ; - разделитель.",
+                                     QMessageBox.Ok, QMessageBox.Ok)
+        CONTROLS["env"].log.info("Импорт записей в файл...")
+        imp_invitation = "Выберите файл для импорта записей."
+        imp_start_location = getcwd()
+        imp_filter = "Файл CSV (*.csv);;Все файлы (*)"
+        imp_file = QFileDialog.getOpenFileName(self, imp_invitation,
+                                               imp_start_location, imp_filter)[0]
+        if len(imp_file) > 0:
+            CONTROLS["env"].log.info("Выбран файл для импорта.")
+            CONTROLS["env"].log.debug(f"{imp_file}")
+            LOCAL_VARS["last_err_code"] = CONTROLS["env"].import_records_from_file(imp_file,
+                                                                                   f"{getcwd()}\\sql\\insert_value_into_actions.sql",
+                                                                                   "Actions_log")
+            if LOCAL_VARS["last_err_code"] == 0:
+                CONTROLS["env"].log.info("Импорт успешно выполнен. Записи БД будут перезагружены.")
+                self.load_last_X_actions()
+            else:
+                CONTROLS["env"].log.warning("Во время импорта данных произошла ошибка!")
+        else:
+            CONTROLS["env"].log.info("Импорт отменён пользователем.")
+                
+        return None
 
     def load_categories_of_optype(self, cmb_index) -> None:
 

@@ -379,6 +379,51 @@ class Environment(object):
 
         return None
 
+    def import_records_from_file(self, import_file: str, sql_path: str, table_name: str, ) -> int:
+        """
+        NOTE: supposing that file exists
+        """
+        result = 0
+        cmd = None
+        data = None
+        CONTROLS["env"].log.info("Поиск SQL-скрипта..")
+        CONTROLS["env"].log.debug(f"path={sql_path}")
+        if os.path.isfile(sql_path) is False:
+            CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
+            CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
+            return 2
+        CONTROLS["env"].log.info("SQL-скрипт обнаружен.")
+        try:
+            with open(file=sql_path, mode='r', encoding='utf-8') as cmd_buf:
+               cmd = cmd_buf.read() 
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Не удалось загрузить SQL-скрипт.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+            return 3
+        CONTROLS["env"].log.info("Чтение файла для импорта...")
+        try:
+            with open(file=import_file, mode='r', encoding="utf-8", newline='') as imp_f:
+                csv_r = csv.reader(imp_f, delimiter=';', quotechar='"')
+                data = [row for row in csv_r]
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Не удалось считать импортируемый файл.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+            return 3
+        CONTROLS["env"].log.info("Исполнение SQL-скрипта..")
+        try:
+            result = CONTROLS["db_bus"].insert_multiple_data_to_actions_log(data, cmd)
+        except Exception as ex:
+            CONTROLS["env"].log.debug(f"Error code: 3 - {ERRORS[3]}")
+            CONTROLS["env"].log.error("Неправильная стуктура SQL-скрипта.")
+            CONTROLS["env"].log.debug(f"Raw exception data: {ex.__str__()}")
+
+            return 3
+        CONTROLS["env"].log.info("SQL-скрипт выполнен.")
+                    
+        return 0
+
     def load_config_from_file(self) -> int:
         """
         DESCR:
