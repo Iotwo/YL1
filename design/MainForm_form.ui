@@ -518,7 +518,7 @@
     <property name="title">
      <string>Меню</string>
     </property>
-    <addaction name="menu_edit_sups_btn"/>
+    <addaction name="menu_edit_fields_btn"/>
     <addaction name="menu_call_info_btn"/>
    </widget>
    <widget class="QMenu" name="main_menu_reports_btn">
@@ -598,7 +598,7 @@
     </font>
    </property>
   </widget>
-  <action name="menu_edit_sups_btn">
+  <action name="menu_edit_fields_btn">
    <property name="text">
     <string>Изменить служебные</string>
    </property>

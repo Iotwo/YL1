@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EditSupportForm</class>
- <widget class="QWidget" name="EditSupportForm">
+ <class>EditFieldsForm</class>
+ <widget class="QWidget" name="EditFieldsForm">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>300</height>
+    <width>300</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
-    <height>300</height>
+    <width>300</width>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>550</width>
-    <height>300</height>
+    <height>900</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -32,9 +32,9 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>0</y>
-     <width>551</width>
-     <height>301</height>
+     <y>-10</y>
+     <width>2</width>
+     <height>2</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="main_layout">
@@ -56,118 +56,110 @@
     <property name="bottomMargin">
      <number>1</number>
     </property>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>301</width>
+     <height>477</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="main_vLayout">
     <item>
-     <layout class="QVBoxLayout" name="ops_layout">
-      <item>
-       <widget class="QRadioButton" name="select_ops_rdbtn">
+     <widget class="QLabel" name="op_lbl">
+      <property name="text">
+       <string>Операции</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="operations_listWidget">
+      <property name="minimumSize">
+       <size>
+        <width>295</width>
+        <height>80</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="cat_lbl">
+      <property name="text">
+       <string>Категории</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="listWidget">
+      <property name="minimumSize">
+       <size>
+        <width>295</width>
+        <height>250</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="cat_btn_gLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="add_new_cat_btn">
         <property name="minimumSize">
          <size>
-          <width>0</width>
-          <height>20</height>
+          <width>120</width>
+          <height>25</height>
          </size>
         </property>
         <property name="text">
-         <string>Редактировать операции</string>
+         <string>Добавить</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QTableWidget" name="ops_table">
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="new_cat_txtEdit">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>20</height>
+         </size>
         </property>
-        <property name="columnCount">
-         <number>1</number>
-        </property>
-        <attribute name="horizontalHeaderCascadingSectionResizes">
-         <bool>true</bool>
-        </attribute>
-        <column/>
        </widget>
       </item>
-      <item>
-       <layout class="QGridLayout" name="ops_ctrl_grid">
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="op_name_txt"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QPushButton" name="add_new_op_btn">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Добавить</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="del_cur_op_btn">
-          <property name="text">
-           <string>Удалить</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="rm_selected_cat_btn">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Удалить категорию</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="cats_layout">
-      <item>
-       <widget class="QRadioButton" name="select_cats_rdbtn">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Редактировать категории</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTableWidget" name="cats_table">
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="columnCount">
-         <number>1</number>
-        </property>
-        <column/>
-       </widget>
-      </item>
-      <item>
-       <layout class="QGridLayout" name="cats_ctrl_grid">
-        <item row="0" column="0">
-         <widget class="QPushButton" name="add_new_cat_btn">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Добавить</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="cat_name_txt"/>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="del_cur_cat_btn">
-          <property name="text">
-           <string>Удалить</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
+     <widget class="QPushButton" name="exit_btn">
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Завершить</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

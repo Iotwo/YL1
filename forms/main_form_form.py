@@ -7,6 +7,8 @@ from PyQt5.QtCore import QLocale
 from forms.main_form_ui import Ui_MainForm
 from forms.settings_form_ui import Ui_SettingsForm
 from forms.settings_form_form import SettingsFormIf
+from forms.edit_fields_form_ui import Ui_EditFieldsForm
+from forms.edit_fields_form_form import EditFieldsFormIf
 from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG
 
 
@@ -24,6 +26,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
 
         CONTROLS["env"].log.debug("Инициализация формы настроек.")
         self.settings = SettingsFormIf(self)
+        self.edit_fields = EditFieldsFormIf(self)
         self.import_configuration()
         
         CONTROLS["env"].log.debug("Загрузка последних записей.")
@@ -39,6 +42,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
     def __new__(cls, *args, **kwargs) -> object:
         instance = super().__new__(cls)
         instance.settings = None
+        instance.edit_fields = None
         instance.table_state = None
         instance.selected_row_data = None
         instance.selected_row_updated_data = None
@@ -96,6 +100,12 @@ class MainFormIf(QMainWindow, Ui_MainForm):
     def call_settings_form(self) -> None:
         self.settings.show()
         CONTROLS["env"].log.debug("Открыта форма настроек.")
+
+        return None
+
+    def call_edit_fields_form(self) -> None:
+        self.edit_fields.show()
+        CONTROLS["env"].log.debug("Открыта форма редактора полей.")
 
         return None
     
@@ -234,13 +244,14 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         self.backlog_tableWidget.cellClicked.connect(self.select_data_from_row)
         self.backlog_tableWidget.cellDoubleClicked.connect(self.set_record_edit_in_backlog)
         self.backlog_tableWidget.cellChanged.connect(self.complete_record_edit_in_backlog)
-        self.menu_settings_btn.triggered.connect(self.call_settings_form)
         self.menu_call_info_btn.triggered.connect(self.call_info)
+        self.menu_edit_fields_btn.triggered.connect(self.call_edit_fields_form)
+        self.menu_import_btn.triggered.connect(self.import_ext_data)
         self.menu_report_today_btn.triggered.connect(self.form_report_today)
         self.menu_report_last_week_btn.triggered.connect(self.form_report_last_week)
         self.menu_report_last_month_btn.triggered.connect(self.form_report_last_month)
         self.menu_report_all_time_btn.triggered.connect(self.form_report_all_time)
-        self.menu_import_btn.triggered.connect(self.import_ext_data)
+        self.menu_settings_btn.triggered.connect(self.call_settings_form)
         self.opSelection_cmbBox.currentIndexChanged.connect(self.load_categories_of_optype)
         self.defVal1_btn.clicked.connect(self.set_def_val_1_to_amount)
         self.defVal2_btn.clicked.connect(self.set_def_val_2_to_amount)
