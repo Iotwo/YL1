@@ -192,6 +192,13 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
             return None
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setText("Отчёт сформирован!")
+        msg.setWindowTitle("Отчёт за период.")
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        retval = msg.exec()
         return None
 
     def form_report_last_month(self) -> None:
@@ -205,6 +212,13 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
             return None
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setText("Отчёт сформирован!")
+        msg.setWindowTitle("Отчёт за период.")
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        retval = msg.exec()
         return None
 
     def form_report_last_week(self) -> None:
@@ -218,6 +232,13 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
             return None
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setText("Отчёт сформирован!")
+        msg.setWindowTitle("Отчёт за период.")
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        retval = msg.exec()
         return None
     
     def form_report_today(self) -> None:
@@ -231,6 +252,13 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             CONTROLS["env"].log.warn("Во время сохранения отчёта произошла ошибка.")
             return None
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setText("Отчёт сформирован!")
+        msg.setWindowTitle("Отчёт за период.")
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        retval = msg.exec()
         return None
 
     def init_ui(self) -> None:
@@ -406,83 +434,5 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             self.app_status_bar.showMessage(f"Состояние таблицы - {LOCAL_VARS['RU_table_states'][1]}")
             CONTROLS["env"].log.debug(f"Редактируется ячейка {row_index}:{column_index}.")
             CONTROLS["env"].log.debug(f"Исходные значения: {self.selected_row_data}.")
-
-        return None
-
-    
-
-    #=====================================
-
-    def call_export_form(self):
-        self.reports.show()
-
-    def add_new_rec_back(self):
-        logging.debug('Попытка добавить новую запись...')
-        cat_chosen = True if self.rec_cat_selector_cmb.currentIndex() != -1 else False
-        op_chosen = True if self.rec_op_selector_cmb.currentIndex() != -1 else False
-        payment_set = True if len(self.price_txt.text()) > 0 else False
-        payment_set = True if all([True for sym in self.price_txt.text() if sym in '0123456789.']) is True else False
-        if all((cat_chosen, op_chosen, payment_set,)) is True:
-            op_chosen = self.OPERATION_IDs[self.rec_op_selector_cmb.currentIndex()]
-            cat_chosen = self.CATEGORIES_IDs[self.rec_cat_selector_cmb.currentIndex()]
-            payment_set = float(self.price_txt.text())
-            try:
-                supportive_vestments.sql_insert_new_action(db_cursor=local_vars.DB_CURSOR,
-                                                           db_connector=local_vars.DB_CONNECTOR,
-                                                           datetime_stamp=datetime.datetime.now().replace(microsecond=0), op=op_chosen,
-                                                           cat=cat_chosen, paid=payment_set,
-                                                           comment=self.rec_comment_txt.toPlainText())
-                logging.debug('Запись успешно добавлена')
-            except Exception as ex:
-                logging.error(ex)
-                return None
-            self.cancel_rec()
-            self.load_last_actions()
-        else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("Не все поля заполнены корректно.")
-            msg.setWindowTitle("Внимание!")
-            msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-            retval = msg.exec()
-        return None
-
-
-    def cancel_rec(self):
-        self.rec_cat_selector_cmb.setCurrentIndex(-1)
-        self.rec_op_selector_cmb.setCurrentIndex(-1)
-        self.price_txt.setText('')
-        self.rec_comment_txt.setPlainText('')
-
-    def select_cur_act_row(self, row_index):
-        self.actions_table.selectRow(row_index)
-
-    def del_cur_action(self, row_index):
-        logging.debug('Попытка удалить запись...')
-        self.actions_table.selectRow(row_index)
-        act = self.actions_table.selectedItems()[0].data(0)
-        op = self.OPERATION_IDs[self.rec_op_selector_cmb.findText(self.actions_table.selectedItems()[1].data(0))]
-        cat = self.CATEGORIES_IDs[self.rec_cat_selector_cmb.findText(self.actions_table.selectedItems()[2].data(0))]
-        paid = self.actions_table.selectedItems()[3].data(0)
-        data = {
-            'action_datetime': act,
-            'optype_id': op,
-            'cat_id': cat,
-            'paid_value': paid,
-            'comment': self.actions_table.selectedItems()[4].data(0)
-        }
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Information)
-        msg.setText("Вы действительно хотите удалить эту запись?")
-        msg.setWindowTitle("Подтверждение удаления.")
-        msg.setStandardButtons(QMessageBox.StandardButton.No)
-        msg.addButton(QMessageBox.StandardButton.Yes)
-        retval = msg.exec()
-        if retval == QMessageBox.StandardButton.Yes:
-            supportive_vestments.sql_delete_action_data(local_vars.DB_CURSOR, local_vars.DB_CONNECTOR, data)
-            self.load_last_actions()
-            logging.debug('Запись успешно удалена.')
-        else:
-            logging.warning('В ходе удаления возникли ошибки.')
 
         return None
