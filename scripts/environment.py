@@ -1,4 +1,4 @@
-import os
+from os import getcwd, mkdir, path
 import sys
 import logging
 import datetime
@@ -33,7 +33,7 @@ class Environment(object):
         """
         CONTROLS["env"].log.info("Поиск DDL-скрипта базы данных..")
         CONTROLS["env"].log.debug(f"path={ddl_path}")
-        if os.path.isfile(ddl_path) is False:
+        if path.isfile(ddl_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть DDL-скрипт базы данных.")
         CONTROLS["env"].log.info("DDL-скрипт обнаружен.")
@@ -61,7 +61,7 @@ class Environment(object):
 
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return 2
@@ -85,7 +85,7 @@ class Environment(object):
         
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return 2
@@ -109,7 +109,7 @@ class Environment(object):
         
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return 2
@@ -135,7 +135,7 @@ class Environment(object):
         result = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return None
@@ -160,7 +160,7 @@ class Environment(object):
         result = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return None
@@ -184,7 +184,7 @@ class Environment(object):
         result = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return None
@@ -211,7 +211,7 @@ class Environment(object):
         result = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return 2
@@ -243,7 +243,7 @@ class Environment(object):
         REQUIRE:
         RETURN: 
         """
-        if os.path.isfile(os.getcwd() + "\\config.cfg") is False:
+        if path.isfile(getcwd() + "\\config.cfg") is False:
             CONTROLS["env"].log.debug(f"Error code: 1 - {ERRORS[1]}")
             CONTROLS["env"].log.warn("Файл конфигурации не обнаружен.")
             return 1
@@ -258,7 +258,7 @@ class Environment(object):
         REQUIRE:
         RETURN: 
         """
-        if os.path.isfile(CONFIG["db_path"]) is False:
+        if path.isfile(CONFIG["db_path"]) is False:
             CONTROLS["env"].log.debug(f"Error code: 1 - {ERRORS[1]}")
             CONTROLS["env"].log.warn("Файл базы данных не обнаружен.")
             return 1
@@ -292,10 +292,10 @@ class Environment(object):
         REQUIRE:
         RETURN: 
         """
-        if os.path.exists(os.getcwd() + "\\logs") is False:
-            os.mkdir(os.getcwd() + "\\logs")
-        if os.path.exists(os.getcwd() + "\\reports") is False:
-            os.mkdir(os.getcwd() + "\\reports")
+        if path.exists(getcwd() + "\\logs") is False:
+            mkdir(getcwd() + "\\logs")
+        if path.exists(getcwd() + "\\reports") is False:
+            mkdir(getcwd() + "\\reports")
 
         return None
 
@@ -353,7 +353,7 @@ class Environment(object):
         RETURN: 
         """
         CONTROLS["env"].log.debug("Инициализация значений по умолчанию для конфигурации.")
-        CONFIG["db_path"] = f"{os.getcwd()}\\opdb.db"
+        CONFIG["db_path"] = f"{getcwd()}\\opdb.db"
         CONFIG["def_btn1"] = 100
         CONFIG["def_btn2"] = 150
         CONFIG["def_btn3"] = 300
@@ -388,7 +388,7 @@ class Environment(object):
         data = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
-        if os.path.isfile(sql_path) is False:
+        if path.isfile(sql_path) is False:
             CONTROLS["env"].log.debug(f"Error code: 2 - {ERRORS[2]}")
             CONTROLS["env"].log.error("Не удалось открыть SQL-скрипт.")
             return 2
@@ -479,8 +479,8 @@ class Environment(object):
             
         CONTROLS["env"].log.debug("Чтение базы данных...")
         try:
-            with open(file=f"{os.getcwd()}\\sql\\get_datatables_from_db.sql", mode='r', encoding="utf-8") as query:
-                CONTROLS["env"].log.debug(f"file={os.getcwd()}\\sql\\get_datatables_from_db.sql")
+            with open(file=f"{getcwd()}\\sql\\get_datatables_from_db.sql", mode='r', encoding="utf-8") as query:
+                CONTROLS["env"].log.debug(f"file={getcwd()}\\sql\\get_datatables_from_db.sql")
                 query.seek(0)
                 CONTROLS["env"].log.debug("Запрос к базе...")
                 result = CONTROLS["db_bus"].execute_custom_sql(cmd=query.read(), is_select=True)
@@ -505,8 +505,8 @@ class Environment(object):
                         return 3
                 CONTROLS["env"].log.debug("Таблицы базы соответствуют схеме.")
             
-            with open(file=f"{os.getcwd()}\\sql\\get_columns_from_table_template.sql", mode='r', encoding="utf-8") as query:
-                CONTROLS["env"].log.debug(f"file={os.getcwd()}\\sql\\get_columns_from_table_template.sql")
+            with open(file=f"{getcwd()}\\sql\\get_columns_from_table_template.sql", mode='r', encoding="utf-8") as query:
+                CONTROLS["env"].log.debug(f"file={getcwd()}\\sql\\get_columns_from_table_template.sql")
                 for table in LOCAL_VARS["db_tables"].keys():
                     query.seek(0)
                     CONTROLS["env"].log.debug("Запрос к базе...")

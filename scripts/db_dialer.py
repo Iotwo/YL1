@@ -1,5 +1,4 @@
 from datetime import datetime
-import sqlite3
 from sqlite3 import connect, Connection
 from scripts.variables import *
 

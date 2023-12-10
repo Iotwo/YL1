@@ -194,7 +194,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
 
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("Отчёт сформирован!")
         msg.setWindowTitle("Отчёт за период.")
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)
@@ -214,7 +214,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
 
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("Отчёт сформирован!")
         msg.setWindowTitle("Отчёт за период.")
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)
@@ -234,7 +234,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
 
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("Отчёт сформирован!")
         msg.setWindowTitle("Отчёт за период.")
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)
@@ -254,7 +254,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         CONTROLS["env"].log.info("Отчёт сформирован и выгружен.")
 
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Info)
+        msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("Отчёт сформирован!")
         msg.setWindowTitle("Отчёт за период.")
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)

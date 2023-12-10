@@ -1,8 +1,8 @@
-from forms.settings_form_ui import Ui_SettingsForm
+from os import getcwd
 from PyQt5.QtWidgets import QWidget, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import QLocale
-from os import getcwd
+from forms.settings_form_ui import Ui_SettingsForm
 from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG, ERRORS
 
 

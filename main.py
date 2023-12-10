@@ -1,13 +1,10 @@
 import sys
-import os
+from os import getcwd
 import logging
-import datetime
-import csv
-from PyQt5 import QtCore, QtWidgets 
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from forms.main_form_ui import Ui_MainForm
 from forms.main_form_form import MainFormIf
-from forms.settings_form_ui import Ui_SettingsForm
-from forms.settings_form_form import SettingsFormIf
 from scripts.environment import Environment
 from scripts.db_dialer import DBDialer
 from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG, ERRORS
@@ -23,16 +20,16 @@ if __name__ == "__main__":
     CONTROLS["env"].log.debug(f"Перечисление кодов ошибок:")
     CONTROLS["env"].log.debug(f"{';'.join(['='.join((str(key), str(val),)) for key, val in ERRORS.items()])}")
     
-    if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    if hasattr(Qt, "AA_EnableHighDpiScaling"):
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
         CONTROLS["env"].log.debug("Включено масштабирование высокого разрешения.")
 
-    if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+    if hasattr(Qt, "AA_UseHighDpiPixmaps"):
+        QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
         CONTROLS["env"].log.debug("Используются пиксельные карты высокого разрешения.")
 
     CONTROLS["db_bus"] = DBDialer()
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     CONTROLS["env"].log.info("Инициализирован экзеспляр приложения.")
 
     sys.excepthook = CONTROLS["env"].redirect_except_hook
@@ -40,11 +37,11 @@ if __name__ == "__main__":
     
     CONTROLS["env"].log.info("Поиск файла конфигурации...")
     if CONTROLS["env"].check_config_file_exists() != 0:
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("Файл конфигурации не обнаружен!\nБудут использованы значения по умолчанию.")
         msg.setWindowTitle("Информация о запуске.")
-        msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
         retval = msg.exec()
         CONTROLS["env"].initiate_default_config()
         CONTROLS["env"].save_config_to_file()
@@ -53,19 +50,19 @@ if __name__ == "__main__":
 
     CONTROLS["env"].log.info("Поиск файла базы данных...")
     if CONTROLS["env"].check_db_file_exists() != 0:
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("Файл базы данных не обнаружен!\nБаза данных будет сконструирована.")
         msg.setWindowTitle("Информация о запуске.")
-        msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
         retval = msg.exec()
         CONTROLS["env"].create_db_file()
-        CONTROLS["env"].call_db_ddl(f"{os.getcwd()}\\sql\\ddl.sql")
+        CONTROLS["env"].call_db_ddl(f"{getcwd()}\\sql\\ddl.sql")
     else:
         LOCAL_VARS["last_err_code"] = CONTROLS["env"].open_db_file()
         if LOCAL_VARS["last_err_code"] != 0:
-            CONTROLS["env"].call_db_purge(f"{os.getcwd()}\\sql\\get_datatables_from_db.sql")
-            CONTROLS["env"].call_db_ddl(f"{os.getcwd()}\\sql\\ddl.sql")
+            CONTROLS["env"].call_db_purge(f"{getcwd()}\\sql\\get_datatables_from_db.sql")
+            CONTROLS["env"].call_db_ddl(f"{getcwd()}\\sql\\ddl.sql")
     
     CONTROLS["env"].log.info("Инициализация главной формы приложения...")
     m_form = MainFormIf()
