@@ -155,6 +155,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
     def decline_changes_and_clear(self) -> None:
         result = None
         if self.table_state == LOCAL_VARS["table_states"][1]:
+            CONTROLS["env"].log.info("Отмена изменений, внесённых в поля.")
             self.opSelection_cmbBox.selectIndex(-1)
             self.catSelection_list.selectRow(-1)
             self.amount_lineEd.setText("")
@@ -167,7 +168,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             else:
                 CONTROLS["env"].log.error("Во время удаления записи возникла ошибка.")
             self.load_last_X_actions()
-            self.backlog_tableWidget.selectRow(None)
+            self.backlog_tableWidget.selectRow(-1)
             self.selected_row_data = None
             self.selected_row_updated_data = None
             self.app_status_bar.clearMessage()

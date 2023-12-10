@@ -25,6 +25,12 @@
     <height>900</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>Times New Roman</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Изменить служебные данные</string>
   </property>
@@ -64,12 +70,19 @@
      <x>0</x>
      <y>0</y>
      <width>301</width>
-     <height>477</height>
+     <height>479</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="main_vLayout">
     <item>
      <widget class="QLabel" name="op_lbl">
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Операции</string>
       </property>
@@ -79,17 +92,31 @@
      </widget>
     </item>
     <item>
-     <widget class="QListWidget" name="operations_listWidget">
+     <widget class="QListWidget" name="operations_list">
       <property name="minimumSize">
        <size>
         <width>295</width>
         <height>80</height>
        </size>
       </property>
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QLabel" name="cat_lbl">
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Категории</string>
       </property>
@@ -99,12 +126,19 @@
      </widget>
     </item>
     <item>
-     <widget class="QListWidget" name="op_categories_listWidget">
+     <widget class="QListWidget" name="op_categories_list">
       <property name="minimumSize">
        <size>
         <width>295</width>
         <height>250</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
       </property>
      </widget>
     </item>
@@ -117,6 +151,12 @@
           <width>120</width>
           <height>25</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Times New Roman</family>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Добавить</string>
@@ -141,6 +181,12 @@
           <height>25</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <family>Times New Roman</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Удалить категорию</string>
         </property>
@@ -155,6 +201,12 @@
         <width>200</width>
         <height>25</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>10</pointsize>
+       </font>
       </property>
       <property name="text">
        <string>Завершить</string>
