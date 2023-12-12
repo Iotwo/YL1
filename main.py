@@ -1,4 +1,10 @@
-import sys
+##################################################
+# This program is project for LMS
+# Yandex Lyceum to demonstrate interaction
+# between Python and SQLite DB via PyQt interface
+##################################################
+
+import sys  # cannot be imported any other way due to deep problem of exception hooks
 from os import getcwd
 import logging
 from PyQt5.QtCore import Qt
@@ -11,6 +17,7 @@ from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG, ERRORS
 
 
 if __name__ == "__main__":
+    # Declare and configure inner logger.
     CONTROLS["env"] = Environment()
     CONTROLS["env"].create_base_dirs()
     CONTROLS["env"].initiate_log_file()
@@ -19,22 +26,25 @@ if __name__ == "__main__":
     CONTROLS["env"].log.info("===========================================")
     CONTROLS["env"].log.debug(f"Перечисление кодов ошибок:")
     CONTROLS["env"].log.debug(f"{';'.join(['='.join((str(key), str(val),)) for key, val in ERRORS.items()])}")
-    
+
+    # Adapt for HD-screens.
     if hasattr(Qt, "AA_EnableHighDpiScaling"):
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
         CONTROLS["env"].log.debug("Включено масштабирование высокого разрешения.")
-
     if hasattr(Qt, "AA_UseHighDpiPixmaps"):
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
         CONTROLS["env"].log.debug("Используются пиксельные карты высокого разрешения.")
 
+    # Initiate DB adapter
     CONTROLS["db_bus"] = DBDialer()
     app = QApplication(sys.argv)
     CONTROLS["env"].log.info("Инициализирован экзеспляр приложения.")
 
+    # Override inner exceptions to pass them outside.
     sys.excepthook = CONTROLS["env"].redirect_except_hook
     CONTROLS["env"].log.debug("Настроен перехват внутренних событий PyQt.")
-    
+
+    # Searching config-file
     CONTROLS["env"].log.info("Поиск файла конфигурации...")
     if CONTROLS["env"].check_config_file_exists() != 0:
         msg = QMessageBox()
@@ -48,6 +58,7 @@ if __name__ == "__main__":
     else:
         CONTROLS["env"].load_config_from_file()
 
+    # Search for Database file
     CONTROLS["env"].log.info("Поиск файла базы данных...")
     if CONTROLS["env"].check_db_file_exists() != 0:
         msg = QMessageBox()
@@ -63,7 +74,8 @@ if __name__ == "__main__":
         if LOCAL_VARS["last_err_code"] != 0:
             CONTROLS["env"].call_db_purge(f"{getcwd()}\\sql\\get_datatables_from_db.sql")
             CONTROLS["env"].call_db_ddl(f"{getcwd()}\\sql\\ddl.sql")
-    
+
+    # Start the application
     CONTROLS["env"].log.info("Инициализация главной формы приложения...")
     m_form = MainFormIf()
     m_form.show()

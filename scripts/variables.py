@@ -1,3 +1,7 @@
+#############################################
+# File with constants and control parameters.
+#############################################
+
 LOCAL_VARS = {
     "conf_path": "./config.cfg",
     "help_path": "./help/help.html",

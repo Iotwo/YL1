@@ -8,6 +8,9 @@ from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG, ERRORS
 
 class SettingsFormIf(QWidget, Ui_SettingsForm):
     def __init__(self, parent):
+        """
+        DESCR: Initiate new object exemplar.
+        """
         super().__init__()
         super().setupUi(self,)
         super().retranslateUi(self,)
@@ -20,6 +23,9 @@ class SettingsFormIf(QWidget, Ui_SettingsForm):
         return None
 
     def __new__(cls, *args, **kwargs) -> object:
+        """
+        DESCR: Create new object exemplar.
+        """
         instance = super().__new__(cls)
         CONTROLS["env"].log.debug(f"Создан экземпляр #{id(instance)}-{type(instance)}")
         
@@ -27,6 +33,9 @@ class SettingsFormIf(QWidget, Ui_SettingsForm):
     
 
     def init_ui(self) -> None:
+        """
+        DESCR: Initialise user interface.
+        """
         self.allow_int_on_defBtns_lineEd = QIntValidator(0, 30000)
         locale = QLocale(QLocale.English, QLocale.UnitedStates)
         self.allow_int_on_defBtns_lineEd.setLocale(locale)
@@ -44,7 +53,9 @@ class SettingsFormIf(QWidget, Ui_SettingsForm):
         return None
 
     def choose_db_dialog(self) -> None:
-
+        """
+        DESCR: Choose DB file and save it to configuration.
+        """
         ofd_invitation = "Выберите файл БД."
         ofd_start_location = getcwd()
         ofd_filter = "База данных (*.db);;База данных (*.sqlite);;Все файлы (*)"
@@ -55,6 +66,9 @@ class SettingsFormIf(QWidget, Ui_SettingsForm):
         return None
 
     def apply_new_settings_and_exit(self) -> None:
+        """
+        DESCR: Set configuration values to buffer, write to file and leave form
+        """
         CONTROLS["env"].log.info("Запись конфигурации в буфер..")
         try:
             CONFIG["db_path"] = self.dbPath_lineEd.text()
@@ -94,6 +108,9 @@ class SettingsFormIf(QWidget, Ui_SettingsForm):
     
 
     def cancel_and_exit(self) -> None:
+        """
+        DESCR: Abandon changes and leave form.
+        """
         self.dbPath_lineEd.setText(CONFIG["db_path"])
         self.defBtn1_lnEd.setText(str(CONFIG["def_btn1"]))
         self.defBtn2_lnEd.setText(str(CONFIG["def_btn2"]))
@@ -107,7 +124,9 @@ class SettingsFormIf(QWidget, Ui_SettingsForm):
         return None
 
     def load_cfg(self) -> None:
-        
+        """
+        DESCR: Set configuration values from file to fields
+        """
         self.dbPath_lineEd.setText(CONFIG["db_path"])
         self.defBtn1_lnEd.setText(CONFIG["def_btn1"])
         self.defBtn2_lnEd.setText(CONFIG["def_btn2"])

@@ -5,7 +5,13 @@ from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG, ERRORS
 
 
 class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
+    """
+        
+    """
     def __init__(self, parent):
+        """
+        DESCR: Initiate new object exemplar
+        """
         super().__init__()
         super().setupUi(self,)
         super().retranslateUi(self,)
@@ -18,6 +24,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return None
 
     def __new__(cls, *args, **kwargs) -> object:
+        """
+        DESCR: Create new object exemplar
+        """
         instance = super().__new__(cls)
         instance.selected_op = None
         instance.selected_cat = None
@@ -26,6 +35,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return instance
 
     def add_new_category_for_optype(self, operation: str) -> None:
+        """
+        DESCR: Insert new category of operations into DB
+        """
         CONTROLS["env"].log.debug(f"Начат процесс добавления записи, проверка заполненности всех атрибутов...")
         
         msg = QMessageBox()
@@ -57,6 +69,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return None
     
     def exit_form_and_hide(self) -> None:
+        """
+        DESCR: Decline changes and leave form hidden.
+        """
         self.new_cat_txtEdit.setText("")
         self.selected_op = None
         self.selected_cat = None
@@ -67,6 +82,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return None
 
     def init_ui(self) -> None:
+        """
+        DESCR: Initiate user interface.
+        """
         self.operations_list.itemClicked.connect(self.load_categories_of_optype)
         self.op_categories_list.itemClicked.connect(self.set_selected_cat)
         self.add_new_cat_btn.clicked.connect(self.add_new_category_for_optype)
@@ -75,6 +93,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return None
     
     def load_categories_of_optype(self, selectedItem) -> None:
+        """
+        DESCR: Load categories of exact operation from DB.
+        """
         si = selectedItem
         si_t = "" if selectedItem is None or isinstance(selectedItem, str) is True else selectedItem.text()
         CONTROLS["env"].log.debug(f"Выбран элемент {si}, значение - {si_t}")
@@ -86,6 +107,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return None
 
     def load_operation_types(self) -> None:
+        """
+        DESCR: Load all operation types from DB.
+        """
         self.operations_list.clear()
         rows = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\get_all_operations.sql")
         for row in rows:
@@ -93,6 +117,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return None
 
     def remove_selected_category(self, selectedCategory) -> None:
+        """
+        DESCR: Remove selected category from DB.
+        """
         result = None
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Warning)
@@ -118,6 +145,9 @@ class EditFieldsFormIf(QWidget, Ui_EditFieldsForm):
         return None
     
     def set_selected_cat(self, selectedItem) -> None:
+        """
+        DESCR: On click collect all data from clicked ROW
+        """
         si = selectedItem
         si_t = "" if selectedItem is None or isinstance(selectedItem, str) is True else selectedItem.text()
         CONTROLS["env"].log.debug(f"Выбран элемент {si}, значение - {si_t}")

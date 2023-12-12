@@ -10,8 +10,6 @@ from scripts.variables import *
 class Environment(object):
     """
     DESCR: this class describes interaction between the main program and files in OS
-    REQUIRE:
-    RETURN: 
     """
 
     def __new__(cls, *args, **kwargs) -> object:
@@ -27,9 +25,9 @@ class Environment(object):
 
     def call_db_ddl(self, ddl_path: str) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: find and load ddl-sql-script and pass it to DB-dialer
+        ARGS:
+            -ddl_path: full path to the script;
         """
         CONTROLS["env"].log.info("Поиск DDL-скрипта базы данных..")
         CONTROLS["env"].log.debug(f"path={ddl_path}")
@@ -54,9 +52,9 @@ class Environment(object):
 
     def call_db_purge(self, sql_path: str) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: find and load database purge script
+        ARGS:
+            -sql_path: full path to the script
         """
 
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
@@ -82,7 +80,14 @@ class Environment(object):
         return 0
 
     def call_delete_rec_command(self, sql_path: str, table_name: str, del_marker: str, del_val: str) -> int:
-        
+        """
+        DESCR: find and load sql-deletion script and pass it to DB-dialer
+        ARGS:
+            -sql_path: full path to the script;
+            -table_name: name of the target table;
+            -del_marker: attribute to distinct deleted records;
+            -del_val: attribute value for distinction;
+        """
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
         if path.isfile(sql_path) is False:
@@ -106,7 +111,13 @@ class Environment(object):
         return 0
     
     def call_insert_new_rec(self, sql_path: str, table_name: str, values: list) -> int:
-        
+        """
+        DESCR: find and load sql-insert command and pass it to DB-dialer
+        ARGS:
+            -sql_path: full path to the script;
+            -table_name: target table;
+            -values: collection of attributes and inserting values
+        """
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
         if path.isfile(sql_path) is False:
@@ -131,6 +142,9 @@ class Environment(object):
 
     def call_select_last_x_records(self, sql_path: str) -> object:
         """
+        DESCR: find and load sql-select script and pass it to DB-dialer
+        ARGS:
+            -sql_path: full path to the script
         """
         result = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
@@ -156,7 +170,11 @@ class Environment(object):
         return result
 
     def call_select_cats_of_op(self, sql_path:str, op_type: str) -> object:
-
+        """
+        DESCR: find and load sql-select script and pass it to DB-dialer
+        ARGS:
+            -sql_path: full path to the script
+        """
         result = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
         CONTROLS["env"].log.debug(f"path={sql_path}")
@@ -180,6 +198,9 @@ class Environment(object):
 
     def call_sql_select_cmd(self, sql_path: str) -> object:
         """
+        DESCR: find and load sql-select script and pass it to DB-dialer
+        ARGS:
+            -sql_path: full path to the script
         """
         result = None
         CONTROLS["env"].log.info("Поиск SQL-скрипта..")
@@ -206,6 +227,13 @@ class Environment(object):
 
     def call_update_record_in_table(self, sql_path: str, table_name:str, upd_params: dict, key_name: str, key_val: str) -> int:
         """
+        DESCR: find and load sql-update script and pass it to DB-dialer
+        ARGS:
+            -sql_path: full path to the script;
+            -table_name: target table;
+            -upd_params: dictionary of updated attributes and their new values;
+            -key_name: key attribute to separate updated records;
+            -key_val: attribute values;
         """
         
         result = None
@@ -239,9 +267,7 @@ class Environment(object):
     
     def check_config_file_exists(self) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Try find the configuration file.
         """
         if path.isfile(getcwd() + "\\config.cfg") is False:
             CONTROLS["env"].log.debug(f"Error code: 1 - {ERRORS[1]}")
@@ -254,9 +280,7 @@ class Environment(object):
 
     def check_db_file_exists(self) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Try to find the DB file. 
         """
         if path.isfile(CONFIG["db_path"]) is False:
             CONTROLS["env"].log.debug(f"Error code: 1 - {ERRORS[1]}")
@@ -270,9 +294,7 @@ class Environment(object):
 
     def create_db_file(self) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Create DB file
         """
         CONTROLS["env"].log.debug("Создание файла базы...")
         try:
@@ -288,9 +310,7 @@ class Environment(object):
     
     def create_base_dirs(self,) -> None:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Create base working directories (for dynamic files)
         """
         if path.exists(getcwd() + "\\logs") is False:
             mkdir(getcwd() + "\\logs")
@@ -301,6 +321,10 @@ class Environment(object):
 
     def create_report_file(self, r_type: str, r_data: list) -> None:
         """
+        DESCR: create report file with given report data.
+        ARGS:
+            -report_type: report file extension (csv, txt);
+            -r_data: report data to be written to file;
         """
         result = None
         CONTROLS["env"].log.info("Формирование отчёта..")
@@ -348,9 +372,7 @@ class Environment(object):
     
     def initiate_default_config(self) -> None:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: If no config file found initiate defaults.
         """
         CONTROLS["env"].log.debug("Инициализация значений по умолчанию для конфигурации.")
         CONFIG["db_path"] = f"{getcwd()}\\opdb.db"
@@ -365,9 +387,7 @@ class Environment(object):
     
     def initiate_log_file(self) -> None:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Initiate logger and log-file to write program progress 
         """
         with open(file=f"{LOCAL_VARS['log_dir']}Y1_{datetime.datetime.now().date()}_app.log", mode='a', encoding="utf-8") as f:
             f.write("")
@@ -381,7 +401,8 @@ class Environment(object):
 
     def import_records_from_file(self, import_file: str, sql_path: str, table_name: str, ) -> int:
         """
-        NOTE: supposing that file exists
+        DESCR: Try import data from file to Actions table
+        NOTE: supposing that file exists and satisfies all conditions
         """
         result = 0
         cmd = None
@@ -426,9 +447,7 @@ class Environment(object):
 
     def load_config_from_file(self) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Import configuration from cfg-file
         """
         CONTROLS["env"].log.debug("Загрузка конфигурации...")
         try:
@@ -461,9 +480,7 @@ class Environment(object):
 
     def open_db_file(self) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Connect to database and check it structure satisfies requirments.
         """
         result = None
         
@@ -546,9 +563,7 @@ class Environment(object):
 
     def redirect_except_hook(self, cls, exception, traceback) -> None:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: catch inner events and pass it outside PyQt engine.
         """
         sys.__excepthook__(cls, exception, traceback)
 
@@ -556,9 +571,7 @@ class Environment(object):
 
     def save_config_to_file(self) -> int:
         """
-        DESCR:
-        REQUIRE:
-        RETURN: 
+        DESCR: Export configuration to cfg-file
         """
         CONTROLS["env"].log.debug("Сохранение значений конфигурации в файл...")
         try:

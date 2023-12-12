@@ -14,11 +14,16 @@ from scripts.variables import CONTROLS, LOCAL_VARS, CONFIG
 
 class MainFormIf(QMainWindow, Ui_MainForm):
     """
-    DESCR: Defines application main form behaviour
-    REQUIRE: PyQt5
+    DESCR: Defines application main form behaviour.
+           Main form is needed for records processing
+           and statistics collecting.
     """
     
     def __init__(self) -> None:
+        """
+        DESCR: Initiate newly created exemplar and configure it.
+        """
+        
         super().__init__()
         super().setupUi(self,)
         super().retranslateUi(self,)
@@ -40,6 +45,10 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def __new__(cls, *args, **kwargs) -> object:
+        """
+        DESCR: Create new exemplar of the class,
+               add custom fields for child-forms and buffers
+        """
         instance = super().__new__(cls)
         instance.settings = None
         instance.edit_fields = None
@@ -51,6 +60,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return instance
 
     def add_new_rec(self) -> None:
+        """
+        DESCR: Add new record about financial action to  DB
+        """
         CONTROLS["env"].log.debug(f"Начат процесс добавления записи, проверка заполненности всех атрибутов...")
         
         msg = QMessageBox()
@@ -87,23 +99,27 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         
         return result
 
-    def call_edit_sups_form(self) -> None:
-        self.supports.show()
-
-        return None
-
     def call_info(self) -> None:
+        """
+        DESCR: Open help
+        """
         startfile(f"{getcwd()}\\{LOCAL_VARS['help_path']}")
         
         return None
 
     def call_settings_form(self) -> None:
+        """
+        DESCR: Interact with Settings form
+        """
         self.settings.show()
         CONTROLS["env"].log.debug("Открыта форма настроек.")
 
         return None
 
     def call_edit_fields_form(self) -> None:
+        """
+        DESCR: Interact with Edit form
+        """
         self.edit_fields.show()
         CONTROLS["env"].log.debug("Открыта форма редактора полей.")
 
@@ -111,7 +127,7 @@ class MainFormIf(QMainWindow, Ui_MainForm):
     
     def closeEvent(self, event) -> None:
         """
-        NOTE: PROCESS THIS!!!
+        DESCR: Process closing event on form. Ask for confirmation.
         """  
         CONTROLS["env"].log.debug("Закрытие главной формы приложения.")
         try:
@@ -130,6 +146,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def complete_record_edit_in_backlog(self, row_index, col_index) -> None:
+        """
+        DESCR: Edit-part-2. Set new values for edited record and complete edition.
+        """
         if self.table_state == LOCAL_VARS["table_states"][1]:
             self.selected_row_updated_data = [self.backlog_tableWidget.item(row_index, j).text()
                                               for j in range(self.backlog_tableWidget.columnCount())]
@@ -153,6 +172,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def decline_changes_and_clear(self) -> None:
+        """
+        DESCR: Method declines made unsaved changes or removes selected record.
+        """
         result = None
         if self.table_state == LOCAL_VARS["table_states"][1]:
             CONTROLS["env"].log.info("Отмена изменений, внесённых в поля.")
@@ -175,13 +197,10 @@ class MainFormIf(QMainWindow, Ui_MainForm):
             self.app_status_bar.showMessage(f"Приложение готово. БД подключена.")
         return None
 
-    def export_report_data(self, data: list) -> None:
-        """
-            DESC:
-        """
-        return None
-
     def form_report_all_time(self) -> None:
+        """
+        DESCR: Form report category-by-category for all timespan.
+        """
         CONTROLS["env"].log.info("Построение отчёта за всё время в формате csv...")
         result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_all_time.sql")
         if result is None:
@@ -202,6 +221,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def form_report_last_month(self) -> None:
+        """
+        DESCR: Form report category-by-category for last month.
+        """
         CONTROLS["env"].log.info("Построение отчёта за последний месяц в формате csv...")
         result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_last_month.sql")
         if result is None:
@@ -222,6 +244,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def form_report_last_week(self) -> None:
+        """
+        DESCR: Form report category-by-category for last week.
+        """
         CONTROLS["env"].log.info("Построение отчёта за последние 7 дней в формате csv...")
         result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_last_week.sql")
         if result is None:
@@ -242,6 +267,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
     
     def form_report_today(self) -> None:
+        """
+        DESCR: Form report category-by-category for this day.
+        """
         CONTROLS["env"].log.info("Построение отчёта за день в формате csv...")
         result = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\form_report_today.sql")
         if result is None:
@@ -262,6 +290,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def init_ui(self) -> None:
+        """
+        DESCR: Initiate interface components.
+        """
         self.allow_float_on_amt_lineEd = QDoubleValidator(0.00,9999999999999.99,2)
         locale = QLocale(QLocale.English, QLocale.UnitedStates)
         self.allow_float_on_amt_lineEd.setNotation(QDoubleValidator.StandardNotation)
@@ -294,6 +325,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def import_configuration(self) -> None:
+        """
+        DESCR: Import configured values from Settings.
+        """
         self.defVal1_btn.setText(self.settings.defBtn1_lnEd.text())
         self.defVal2_btn.setText(self.settings.defBtn2_lnEd.text())
         self.defVal3_btn.setText(self.settings.defBtn3_lnEd.text())
@@ -304,7 +338,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None    
 
     def import_ext_data(self) -> None:
-
+        """
+        DESCR: Load operational data from external source.
+        """
         retval = QMessageBox.warning(self, "Импорт",
                                      "Внимание!\nДля корректного импорта файл должен\nотвечать следующим требованиям:\n" +\
                                      "\" - символ цитирования, ; - разделитель.",
@@ -332,7 +368,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def load_categories_of_optype(self, cmb_index) -> None:
-
+        """
+        DESCR: Load categories of exact operation from DB.
+        """
         self.catSelection_list.clear()
         rows = CONTROLS["env"].call_select_cats_of_op(f"{getcwd()}\\sql\\get_cats_of_operation.sql", self.opSelection_cmbBox.currentText())
         for row in rows:
@@ -341,6 +379,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def load_operation_types(self) -> None:
+        """
+        DESCR: Load all operation types from DB.
+        """
         self.opSelection_cmbBox.clear()
         rows = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\get_all_operations.sql")
         for row in rows:
@@ -350,7 +391,6 @@ class MainFormIf(QMainWindow, Ui_MainForm):
     def load_last_X_actions(self) -> None:
         """
         DESCR: load last X actions from Action_log table into tabWidget
-        REQUIRE: QTableWidgetItem, QTableWidget, os.getcwd
         """
 
         rows = CONTROLS["env"].call_select_last_x_records(f"{getcwd()}\\sql\\get_first_x_actions.sql")
@@ -366,6 +406,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def select_data_from_row(self, row_index) -> None:
+        """
+        DESCR: On click collect all data from clicked ROW
+        """
         CONTROLS["env"].log.debug(f"Левый одиночный клик мыши в таблице в ряд {row_index}")
         self.selected_row_data = [self.backlog_tableWidget.item(row_index, j).text()
                                   for j in range(self.backlog_tableWidget.columnCount())]
@@ -374,6 +417,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_column_headers(self) -> None:
+        """
+        DESCR: Prettify column headers.
+        """
         self.backlog_tableWidget.setHorizontalHeaderLabels(LOCAL_VARS["RU_db_tables"]["Actions_log"])
         self.backlog_tableWidget.setColumnWidth(0, 40)
         self.backlog_tableWidget.setColumnWidth(1, 120)
@@ -385,6 +431,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_def_val_1_to_amount(self) -> None:
+        """
+        DESCR: Apply pre-defined value to button_1
+        """
         self.amount_lineEd.setText("")
         self.amount_lineEd.setText(str(CONFIG["def_btn1"]))
         CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn1']} записано в поле ввода.")
@@ -392,6 +441,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_def_val_2_to_amount(self) -> None:
+        """
+        DESCR: Apply pre-defined value to button_2
+        """
         self.amount_lineEd.setText("")
         self.amount_lineEd.setText(str(CONFIG["def_btn2"]))
         CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn2']} записано в поле ввода.")
@@ -399,6 +451,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_def_val_3_to_amount(self) -> None:
+        """
+        DESCR: Apply pre-defined value to button_3
+        """
         self.amount_lineEd.setText("")
         self.amount_lineEd.setText(str(CONFIG["def_btn3"]))
         CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn3']} записано в поле ввода.")
@@ -406,6 +461,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_def_val_4_to_amount(self) -> None:
+        """
+        DESCR: Apply pre-defined value to button_4
+        """
         self.amount_lineEd.setText("")
         self.amount_lineEd.setText(str(CONFIG["def_btn4"]))
         CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn4']} записано в поле ввода.")
@@ -413,6 +471,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_def_val_5_to_amount(self) -> None:
+        """
+        DESCR: Apply pre-defined value to button_5
+        """
         self.amount_lineEd.setText("")
         self.amount_lineEd.setText(str(CONFIG["def_btn5"]))
         CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn5']} записано в поле ввода.")
@@ -420,6 +481,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_def_val_6_to_amount(self) -> None:
+        """
+        DESCR: Apply pre-defined value to button_6
+        """
         self.amount_lineEd.setText("")
         self.amount_lineEd.setText(str(CONFIG["def_btn6"]))
         CONTROLS["env"].log.debug(f"Значение {CONFIG['def_btn6']} записано в поле ввода.")
@@ -427,6 +491,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         return None
 
     def set_record_edit_in_backlog(self, row_index, column_index) -> None:
+        """
+        DESCR: Edit-part-1, select record for edition, collect pre-edited data...
+        """
         CONTROLS["env"].log.debug(f"Левый двойной клик мыши в таблице в ряд {row_index}")
         if self.table_state == LOCAL_VARS["table_states"][0]:
             self.table_state = LOCAL_VARS["table_states"][1]
