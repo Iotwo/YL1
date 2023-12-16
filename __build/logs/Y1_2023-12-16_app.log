@@ -383,3 +383,279 @@ LIMIT
 15:46:07.429 general_logger DEBUG CONTROLS
 15:46:07.430 general_logger DEBUG env=<scripts.environment.Environment object at 0x00000250B45678D0>;db_bus=<scripts.db_dialer.DBDialer object at 0x00000250B46007D0>
 15:46:07.430 general_logger INFO Код выхода: 0
+15:55:38.930 general_logger INFO ===========================================
+15:55:38.930 general_logger INFO Запись начата.
+15:55:38.930 general_logger INFO ===========================================
+15:55:38.931 general_logger DEBUG Перечисление кодов ошибок:
+15:55:38.931 general_logger DEBUG 0=OK;1=File not found.;2=Not enough permissions in file system.;3=Inconsistent configuration.;4=Incorrect config value.;5=Incorrect report file extenson;255=General error.
+15:55:38.931 general_logger DEBUG Включено масштабирование высокого разрешения.
+15:55:38.931 general_logger DEBUG Используются пиксельные карты высокого разрешения.
+15:55:38.940 general_logger INFO Инициализирован экзеспляр приложения.
+15:55:38.940 general_logger DEBUG Настроен перехват внутренних событий PyQt.
+15:55:38.940 general_logger INFO Поиск файла конфигурации...
+15:55:38.940 general_logger INFO Файл конфигурации обнаружен.
+15:55:38.940 general_logger DEBUG Загрузка конфигурации...
+15:55:38.941 general_logger DEBUG Файл конфигурации загружен.
+15:55:38.941 general_logger DEBUG Чтение конфигурации...
+15:55:38.941 general_logger INFO Конфигурация загружена.
+15:55:38.941 general_logger INFO Поиск файла базы данных...
+15:55:38.941 general_logger INFO Файл базы данных обнаружен.
+15:55:38.941 general_logger DEBUG Открытие файла базы...
+15:55:38.941 general_logger DEBUG Чтение базы данных...
+15:55:38.941 general_logger DEBUG file=D:\Project\YL1\__build\sql\get_datatables_from_db.sql
+15:55:38.941 general_logger DEBUG Запрос к базе...
+15:55:38.941 general_logger DEBUG Готовится SQL-запрос...
+15:55:38.941 general_logger DEBUG SQL:SELECT 
+    name
+FROM 
+    sqlite_schema
+WHERE 
+    type ='table' AND 
+    name NOT LIKE 'sqlite_%';
+15:55:38.941 general_logger DEBUG (('name', None, None, None, None, None, None),)
+15:55:38.941 general_logger DEBUG Запрос вернул 3 кортежей.
+15:55:38.941 general_logger DEBUG Запрос выполнен.
+15:55:38.941 general_logger DEBUG Анализ структуры базы...
+15:55:38.942 general_logger DEBUG Таблицы базы соответствуют схеме.
+15:55:38.942 general_logger DEBUG file=D:\Project\YL1\__build\sql\get_columns_from_table_template.sql
+15:55:38.942 general_logger DEBUG Запрос к базе...
+15:55:38.942 general_logger DEBUG Готовится SQL-запрос...
+15:55:38.942 general_logger DEBUG SQL:PRAGMA table_info('Actions_log');
+15:55:38.942 general_logger DEBUG (('cid', None, None, None, None, None, None), ('name', None, None, None, None, None, None), ('type', None, None, None, None, None, None), ('notnull', None, None, None, None, None, None), ('dflt_value', None, None, None, None, None, None), ('pk', None, None, None, None, None, None))
+15:55:38.942 general_logger DEBUG Запрос вернул 6 кортежей.
+15:55:38.942 general_logger DEBUG Запрос выполнен.
+15:55:38.942 general_logger DEBUG Анализ структуры таблицы Actions_log...
+15:55:38.942 general_logger DEBUG Таблица Actions_log структурирована верно.
+15:55:38.942 general_logger DEBUG Запрос к базе...
+15:55:38.942 general_logger DEBUG Готовится SQL-запрос...
+15:55:38.942 general_logger DEBUG SQL:PRAGMA table_info('Categories');
+15:55:38.942 general_logger DEBUG (('cid', None, None, None, None, None, None), ('name', None, None, None, None, None, None), ('type', None, None, None, None, None, None), ('notnull', None, None, None, None, None, None), ('dflt_value', None, None, None, None, None, None), ('pk', None, None, None, None, None, None))
+15:55:38.942 general_logger DEBUG Запрос вернул 2 кортежей.
+15:55:38.942 general_logger DEBUG Запрос выполнен.
+15:55:38.942 general_logger DEBUG Анализ структуры таблицы Categories...
+15:55:38.942 general_logger DEBUG Таблица Categories структурирована верно.
+15:55:38.942 general_logger DEBUG Запрос к базе...
+15:55:38.942 general_logger DEBUG Готовится SQL-запрос...
+15:55:38.942 general_logger DEBUG SQL:PRAGMA table_info('Operations');
+15:55:38.942 general_logger DEBUG (('cid', None, None, None, None, None, None), ('name', None, None, None, None, None, None), ('type', None, None, None, None, None, None), ('notnull', None, None, None, None, None, None), ('dflt_value', None, None, None, None, None, None), ('pk', None, None, None, None, None, None))
+15:55:38.942 general_logger DEBUG Запрос вернул 1 кортежей.
+15:55:38.942 general_logger DEBUG Запрос выполнен.
+15:55:38.942 general_logger DEBUG Анализ структуры таблицы Operations...
+15:55:38.942 general_logger DEBUG Таблица Operations структурирована верно.
+15:55:38.942 general_logger DEBUG Все таблицы структурированы верно.
+15:55:38.942 general_logger INFO База данных загружена.
+15:55:38.942 general_logger INFO Инициализация главной формы приложения...
+15:55:38.943 general_logger DEBUG Создан экземпляр #2805683535104-<class 'forms.main_form_form.MainFormIf'>
+15:55:39.47 general_logger DEBUG Инициализация формы настроек.
+15:55:39.47 general_logger DEBUG Создан экземпляр #2805685641728-<class 'forms.settings_form_form.SettingsFormIf'>
+15:55:39.54 general_logger DEBUG Настройки программы загружены в форму конфигурации.
+15:55:39.54 general_logger DEBUG Форма настроек приложения инициализирована.
+15:55:39.54 general_logger DEBUG Создан экземпляр #2805685645616-<class 'forms.edit_fields_form_form.EditFieldsFormIf'>
+15:55:39.55 general_logger INFO Поиск SQL-скрипта..
+15:55:39.55 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_all_operations.sql
+15:55:39.55 general_logger INFO SQL-скрипт обнаружен.
+15:55:39.55 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:55:39.55 general_logger DEBUG Готовится SQL-запрос...
+15:55:39.55 general_logger DEBUG SQL:SELECT 
+    op_name
+FROM 
+    Operations;
+
+15:55:39.55 general_logger DEBUG (('op_name', None, None, None, None, None, None),)
+15:55:39.55 general_logger DEBUG Запрос вернул 2 кортежей.
+15:55:39.55 general_logger INFO SQL-скрипт выполнен.
+15:55:39.56 general_logger DEBUG Форма редактирования служебных полей приложения инициализирована.
+15:55:39.56 general_logger DEBUG Загрузка последних записей.
+15:55:39.56 general_logger INFO Поиск SQL-скрипта..
+15:55:39.56 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_all_operations.sql
+15:55:39.56 general_logger INFO SQL-скрипт обнаружен.
+15:55:39.56 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:55:39.56 general_logger DEBUG Готовится SQL-запрос...
+15:55:39.56 general_logger DEBUG SQL:SELECT 
+    op_name
+FROM 
+    Operations;
+
+15:55:39.56 general_logger DEBUG (('op_name', None, None, None, None, None, None),)
+15:55:39.56 general_logger DEBUG Запрос вернул 2 кортежей.
+15:55:39.56 general_logger INFO SQL-скрипт выполнен.
+15:55:39.56 general_logger INFO Поиск SQL-скрипта..
+15:55:39.56 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_cats_of_operation.sql
+15:55:39.56 general_logger INFO SQL-скрипт обнаружен.
+15:55:39.56 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:55:39.56 general_logger DEBUG Готовится SQL-запрос...
+15:55:39.56 general_logger DEBUG SQL:SELECT 
+    cat_name
+FROM 
+    Categories
+WHERE
+    optype = ?;
+
+15:55:39.56 general_logger DEBUG (('cat_name', None, None, None, None, None, None),)
+15:55:39.56 general_logger DEBUG Запрос вернул 9 кортежей.
+15:55:39.56 general_logger INFO Поиск SQL-скрипта..
+15:55:39.56 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_first_x_actions.sql
+15:55:39.56 general_logger INFO SQL-скрипт обнаружен.
+15:55:39.56 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:55:39.56 general_logger DEBUG Готовится SQL-запрос...
+15:55:39.56 general_logger DEBUG SQL:SELECT 
+    id, action_datetime, optype, category, amount, comment 
+FROM 
+    Actions_log
+ORDER BY
+    action_datetime desc
+LIMIT
+    60;
+15:55:39.57 general_logger DEBUG (('id', None, None, None, None, None, None), ('action_datetime', None, None, None, None, None, None), ('optype', None, None, None, None, None, None), ('category', None, None, None, None, None, None), ('amount', None, None, None, None, None, None), ('comment', None, None, None, None, None, None))
+15:55:39.57 general_logger DEBUG Запрос вернул 60 кортежей.
+15:55:39.57 general_logger INFO SQL-скрипт выполнен.
+15:55:39.58 general_logger DEBUG Главная форма приложения инициализирована.
+15:55:39.140 general_logger INFO Приложение готово к работе.
+15:56:03.624 general_logger DEBUG Закрытие главной формы приложения.
+15:56:03.624 general_logger DEBUG Освобождение ресурсов формы...
+15:56:04.729 general_logger DEBUG Значения внутренних переменных по итогу программы:
+15:56:04.729 general_logger DEBUG LOCAL_VARS
+15:56:04.730 general_logger DEBUG conf_path=./config.cfg;help_path=./help/help.html;log_dir=./logs/;report_dir=./reports/;db_tables={'Actions_log': ['id', 'action_datetime', 'optype', 'category', 'amount', 'comment'], 'Categories': ['cat_name', 'optype'], 'Operations': ['op_name']};RU_db_tables={'Actions_log': ['№', 'Когда', 'Тип', 'Категория', 'Сумма', 'Заметка'], 'Categories': [], 'Operations': []};table_states=['view', 'edit'];RU_table_states=['Просмотр', 'Редактирование'];last_err_code=0
+15:56:04.730 general_logger DEBUG CONFIG
+15:56:04.730 general_logger DEBUG db_path=D:/Project/YL1/__build/opdb.db;def_btn1=100;def_btn2=150;def_btn3=300;def_btn4=500;def_btn5=1000;def_btn6=1500
+15:56:04.730 general_logger DEBUG CONTROLS
+15:56:04.730 general_logger DEBUG env=<scripts.environment.Environment object at 0x0000028D3FE078D0>;db_bus=<scripts.db_dialer.DBDialer object at 0x0000028D3F657550>
+15:56:04.730 general_logger INFO Код выхода: 0
+15:57:30.201 general_logger INFO ===========================================
+15:57:30.201 general_logger INFO Запись начата.
+15:57:30.201 general_logger INFO ===========================================
+15:57:30.201 general_logger DEBUG Перечисление кодов ошибок:
+15:57:30.201 general_logger DEBUG 0=OK;1=File not found.;2=Not enough permissions in file system.;3=Inconsistent configuration.;4=Incorrect config value.;5=Incorrect report file extenson;255=General error.
+15:57:30.202 general_logger DEBUG Включено масштабирование высокого разрешения.
+15:57:30.202 general_logger DEBUG Используются пиксельные карты высокого разрешения.
+15:57:30.210 general_logger INFO Инициализирован экзеспляр приложения.
+15:57:30.210 general_logger DEBUG Настроен перехват внутренних событий PyQt.
+15:57:30.210 general_logger INFO Поиск файла конфигурации...
+15:57:30.210 general_logger INFO Файл конфигурации обнаружен.
+15:57:30.210 general_logger DEBUG Загрузка конфигурации...
+15:57:30.210 general_logger DEBUG Файл конфигурации загружен.
+15:57:30.210 general_logger DEBUG Чтение конфигурации...
+15:57:30.210 general_logger INFO Конфигурация загружена.
+15:57:30.210 general_logger INFO Поиск файла базы данных...
+15:57:30.210 general_logger INFO Файл базы данных обнаружен.
+15:57:30.210 general_logger DEBUG Открытие файла базы...
+15:57:30.210 general_logger DEBUG Чтение базы данных...
+15:57:30.210 general_logger DEBUG file=D:\Project\YL1\__build\sql\get_datatables_from_db.sql
+15:57:30.210 general_logger DEBUG Запрос к базе...
+15:57:30.210 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.210 general_logger DEBUG SQL:SELECT 
+    name
+FROM 
+    sqlite_schema
+WHERE 
+    type ='table' AND 
+    name NOT LIKE 'sqlite_%';
+15:57:30.211 general_logger DEBUG (('name', None, None, None, None, None, None),)
+15:57:30.211 general_logger DEBUG Запрос вернул 3 кортежей.
+15:57:30.211 general_logger DEBUG Запрос выполнен.
+15:57:30.211 general_logger DEBUG Анализ структуры базы...
+15:57:30.211 general_logger DEBUG Таблицы базы соответствуют схеме.
+15:57:30.211 general_logger DEBUG file=D:\Project\YL1\__build\sql\get_columns_from_table_template.sql
+15:57:30.211 general_logger DEBUG Запрос к базе...
+15:57:30.211 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.211 general_logger DEBUG SQL:PRAGMA table_info('Actions_log');
+15:57:30.211 general_logger DEBUG (('cid', None, None, None, None, None, None), ('name', None, None, None, None, None, None), ('type', None, None, None, None, None, None), ('notnull', None, None, None, None, None, None), ('dflt_value', None, None, None, None, None, None), ('pk', None, None, None, None, None, None))
+15:57:30.211 general_logger DEBUG Запрос вернул 6 кортежей.
+15:57:30.211 general_logger DEBUG Запрос выполнен.
+15:57:30.211 general_logger DEBUG Анализ структуры таблицы Actions_log...
+15:57:30.211 general_logger DEBUG Таблица Actions_log структурирована верно.
+15:57:30.211 general_logger DEBUG Запрос к базе...
+15:57:30.211 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.211 general_logger DEBUG SQL:PRAGMA table_info('Categories');
+15:57:30.211 general_logger DEBUG (('cid', None, None, None, None, None, None), ('name', None, None, None, None, None, None), ('type', None, None, None, None, None, None), ('notnull', None, None, None, None, None, None), ('dflt_value', None, None, None, None, None, None), ('pk', None, None, None, None, None, None))
+15:57:30.211 general_logger DEBUG Запрос вернул 2 кортежей.
+15:57:30.211 general_logger DEBUG Запрос выполнен.
+15:57:30.211 general_logger DEBUG Анализ структуры таблицы Categories...
+15:57:30.211 general_logger DEBUG Таблица Categories структурирована верно.
+15:57:30.211 general_logger DEBUG Запрос к базе...
+15:57:30.211 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.211 general_logger DEBUG SQL:PRAGMA table_info('Operations');
+15:57:30.211 general_logger DEBUG (('cid', None, None, None, None, None, None), ('name', None, None, None, None, None, None), ('type', None, None, None, None, None, None), ('notnull', None, None, None, None, None, None), ('dflt_value', None, None, None, None, None, None), ('pk', None, None, None, None, None, None))
+15:57:30.211 general_logger DEBUG Запрос вернул 1 кортежей.
+15:57:30.211 general_logger DEBUG Запрос выполнен.
+15:57:30.211 general_logger DEBUG Анализ структуры таблицы Operations...
+15:57:30.211 general_logger DEBUG Таблица Operations структурирована верно.
+15:57:30.211 general_logger DEBUG Все таблицы структурированы верно.
+15:57:30.211 general_logger INFO База данных загружена.
+15:57:30.211 general_logger INFO Инициализация главной формы приложения...
+15:57:30.212 general_logger DEBUG Создан экземпляр #2378628878048-<class 'forms.main_form_form.MainFormIf'>
+15:57:30.313 general_logger DEBUG Инициализация формы настроек.
+15:57:30.313 general_logger DEBUG Создан экземпляр #2378628887408-<class 'forms.settings_form_form.SettingsFormIf'>
+15:57:30.320 general_logger DEBUG Настройки программы загружены в форму конфигурации.
+15:57:30.320 general_logger DEBUG Форма настроек приложения инициализирована.
+15:57:30.320 general_logger DEBUG Создан экземпляр #2378629645072-<class 'forms.edit_fields_form_form.EditFieldsFormIf'>
+15:57:30.320 general_logger INFO Поиск SQL-скрипта..
+15:57:30.320 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_all_operations.sql
+15:57:30.320 general_logger INFO SQL-скрипт обнаружен.
+15:57:30.320 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:57:30.321 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.321 general_logger DEBUG SQL:SELECT 
+    op_name
+FROM 
+    Operations;
+
+15:57:30.321 general_logger DEBUG (('op_name', None, None, None, None, None, None),)
+15:57:30.321 general_logger DEBUG Запрос вернул 2 кортежей.
+15:57:30.321 general_logger INFO SQL-скрипт выполнен.
+15:57:30.321 general_logger DEBUG Форма редактирования служебных полей приложения инициализирована.
+15:57:30.321 general_logger DEBUG Загрузка последних записей.
+15:57:30.321 general_logger INFO Поиск SQL-скрипта..
+15:57:30.321 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_all_operations.sql
+15:57:30.321 general_logger INFO SQL-скрипт обнаружен.
+15:57:30.321 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:57:30.321 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.321 general_logger DEBUG SQL:SELECT 
+    op_name
+FROM 
+    Operations;
+
+15:57:30.321 general_logger DEBUG (('op_name', None, None, None, None, None, None),)
+15:57:30.321 general_logger DEBUG Запрос вернул 2 кортежей.
+15:57:30.321 general_logger INFO SQL-скрипт выполнен.
+15:57:30.321 general_logger INFO Поиск SQL-скрипта..
+15:57:30.321 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_cats_of_operation.sql
+15:57:30.321 general_logger INFO SQL-скрипт обнаружен.
+15:57:30.321 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:57:30.321 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.321 general_logger DEBUG SQL:SELECT 
+    cat_name
+FROM 
+    Categories
+WHERE
+    optype = ?;
+
+15:57:30.321 general_logger DEBUG (('cat_name', None, None, None, None, None, None),)
+15:57:30.321 general_logger DEBUG Запрос вернул 9 кортежей.
+15:57:30.321 general_logger INFO Поиск SQL-скрипта..
+15:57:30.321 general_logger DEBUG path=D:\Project\YL1\__build\sql\get_first_x_actions.sql
+15:57:30.321 general_logger INFO SQL-скрипт обнаружен.
+15:57:30.321 general_logger INFO Исполнение SQL-скрипта базы данных..
+15:57:30.321 general_logger DEBUG Готовится SQL-запрос...
+15:57:30.322 general_logger DEBUG SQL:SELECT 
+    id, action_datetime, optype, category, amount, comment 
+FROM 
+    Actions_log
+ORDER BY
+    action_datetime desc
+LIMIT
+    60;
+15:57:30.322 general_logger DEBUG (('id', None, None, None, None, None, None), ('action_datetime', None, None, None, None, None, None), ('optype', None, None, None, None, None, None), ('category', None, None, None, None, None, None), ('amount', None, None, None, None, None, None), ('comment', None, None, None, None, None, None))
+15:57:30.322 general_logger DEBUG Запрос вернул 60 кортежей.
+15:57:30.322 general_logger INFO SQL-скрипт выполнен.
+15:57:30.323 general_logger DEBUG Главная форма приложения инициализирована.
+15:57:30.406 general_logger INFO Приложение готово к работе.
+15:57:42.254 general_logger DEBUG Закрытие главной формы приложения.
+15:57:42.254 general_logger DEBUG Освобождение ресурсов формы...
+15:57:43.22 general_logger DEBUG Значения внутренних переменных по итогу программы:
+15:57:43.22 general_logger DEBUG LOCAL_VARS
+15:57:43.22 general_logger DEBUG conf_path=./config.cfg;help_path=./help/help.html;log_dir=./logs/;report_dir=./reports/;db_tables={'Actions_log': ['id', 'action_datetime', 'optype', 'category', 'amount', 'comment'], 'Categories': ['cat_name', 'optype'], 'Operations': ['op_name']};RU_db_tables={'Actions_log': ['№', 'Когда', 'Тип', 'Категория', 'Сумма', 'Заметка'], 'Categories': [], 'Operations': []};table_states=['view', 'edit'];RU_table_states=['Просмотр', 'Редактирование'];last_err_code=0
+15:57:43.22 general_logger DEBUG CONFIG
+15:57:43.22 general_logger DEBUG db_path=D:/Project/YL1/__build/opdb.db;def_btn1=100;def_btn2=150;def_btn3=300;def_btn4=500;def_btn5=1000;def_btn6=1500
+15:57:43.22 general_logger DEBUG CONTROLS
+15:57:43.22 general_logger DEBUG env=<scripts.environment.Environment object at 0x00000229D1517610>;db_bus=<scripts.db_dialer.DBDialer object at 0x00000229D15B04D0>
+15:57:43.23 general_logger INFO Код выхода: 0
