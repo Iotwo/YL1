@@ -373,8 +373,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         """
         self.catSelection_list.clear()
         rows = CONTROLS["env"].call_select_cats_of_op(f"{getcwd()}\\sql\\get_cats_of_operation.sql", self.opSelection_cmbBox.currentText())
-        for row in rows:
-            self.catSelection_list.addItem(QListWidgetItem(row[0]))
+        if rows is not None:
+            for row in rows:
+                self.catSelection_list.addItem(QListWidgetItem(row[0]))
         
         return None
 
@@ -384,8 +385,9 @@ class MainFormIf(QMainWindow, Ui_MainForm):
         """
         self.opSelection_cmbBox.clear()
         rows = CONTROLS["env"].call_sql_select_cmd(f"{getcwd()}\\sql\\get_all_operations.sql")
-        for row in rows:
-            self.opSelection_cmbBox.addItem(row[0])
+        if rows is not None:
+            for row in rows:
+                self.opSelection_cmbBox.addItem(row[0])
         
     
     def load_last_X_actions(self) -> None:

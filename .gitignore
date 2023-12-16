@@ -3,5 +3,7 @@ logs/*
 reports/*
 resources/*
 scripts/__pycache__/*
+__build/dist/logs/*
+__build/dist/reports/*
 opdb.db
 *.csv
